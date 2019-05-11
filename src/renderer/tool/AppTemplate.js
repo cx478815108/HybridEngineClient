@@ -49,6 +49,7 @@ class AppTemplate{
             "title"         : this.mainTitle,
             "statusBarStyle": 'white',
             "navBarColor"   : 'rgb(255,255,255)',
+            "pageId"        : 'mainPage'
         }
         return json;
     }

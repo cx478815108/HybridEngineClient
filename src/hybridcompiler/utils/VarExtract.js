@@ -1,12 +1,13 @@
-class VarExtract{
-    constructor(){
+module.exports = (function () {
+
+    const _varExtract = {};
+
+    function VarExtract() {
         this.stack = [];
         this.cache = {};
     }
 
-    parse(text){
-        if(!text || text.length === 0) return [];
-
+    VarExtract.prototype.parse = function (text) {
         if (this.cache[text]) {
             return this.cache[text];
         }
@@ -67,7 +68,13 @@ class VarExtract{
         this.cache[text] = list;
         return list;
     }
-}
 
-const varExtract = new VarExtract();
-module.exports = varExtract();
+    const obj = new VarExtract();
+
+    _varExtract.parse = function parse(text) {
+        if(!text || text.length === 0) return [];
+        return obj.parse(text);
+    }
+
+    return _varExtract;
+})();

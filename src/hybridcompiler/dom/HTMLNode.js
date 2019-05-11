@@ -1,4 +1,4 @@
-const VarExtract = require('./utils/VarExtract');
+const VarExtract = require('../utils/VarExtract');
 
 let uid = 0;
 const UniqueIdAlloc = ()=>{
