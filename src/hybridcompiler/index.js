@@ -1,5 +1,6 @@
 const HTMLDocument  = require('./dom/HTMLDocument');
 const ProjectLoader = require('./utils/ProjectLoader');
+const Compiler      = require('./compiler');
 
 const fs   = require("fs-extra")
 const path = require('path');
@@ -16,11 +17,10 @@ const commonjs    = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const rollupJSON  = require('rollup-plugin-json');
 
-
 const testJSON = {
     "bundle.identifier": "aaa",
     "displayName"      : "bbb",
-    "workDirectory"    : "/Users/feelings/FrontEnd/Token小程序/hello2",
+    "workDirectory"    : "/Users/feelings/FrontEnd/Token小程序/helloworld",
     "entryJS"          : "index.js",
     "entryHTML"        : "index.html",
     "entryCSS"         : "index.css"

@@ -28,6 +28,7 @@ module.exports = class HTMLNode{
         this.bind             = "";
         this.children         = [];
         this.parent           = null;
+
         this.forKeyPath       = null;
         this.dynamicAttrs     = {};
         this.dynamicAttrsData = {};
@@ -65,15 +66,6 @@ module.exports = class HTMLNode{
     // 检测里面是否有变量
     setText(text){
         this.text = text;
-        const list = VarExtract.parse(text);
-        for (let i = 0; i < list.length; i++) {
-            const element = list[i];
-            if(element.type === 1) {
-                this.isDynamicText = true;
-                this.static = false;
-                break;
-            }
-        }
     }
 
     setAttributes(attrs){

@@ -51,7 +51,6 @@
     }
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "blueimp-md5": "^2.10.0",
     "css-select": "^2.0.2",
     "fs-extra": "^7.0.1",
@@ -62,7 +61,6 @@
     "htmlparser2": "^3.10.1",
     "iview": "^3.4.1",
     "lowdb": "^1.0.0",
-    "map-stream": "^0.0.7",
     "postcss": "^7.0.16",
     "postcss-import": "^12.0.1",
     "rollup": "^1.11.3",
@@ -73,7 +71,6 @@
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0"
   },
   "devDependencies": {
