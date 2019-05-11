@@ -19,7 +19,7 @@ class AppManager{
        const sourceNames  = ['index.html','index.js','index.css'];
        const templatePath = path.resolve(__dirname, '../assets/template/');
        for(let i = 0; i < 3;i++){
-           const targetPath = path.join(mainPagePath,targetPaths[i]);
+           const targetPath = path.join(mainPagePath, targetPaths[i]);
            const sourcePath = path.join(templatePath, sourceNames[i]);
            fs.copySync(sourcePath, targetPath);
        }
@@ -27,6 +27,9 @@ class AppManager{
        // 写入tokenhybrid.config.json
        const configJSON = p.getMainConfigJSON();
        fs.writeFileSync(p.configJSONPath, JSON.stringify(configJSON, 4));
+
+       const mainPageJSON = p.getMainPageJSON();
+       fs.writeFileSync(path.join(mainPagePath, 'config.json'), JSON.stringify(mainPageJSON, 4));
 
        AppDB.saveNewAppTemplate(appTemplate);
        return true;

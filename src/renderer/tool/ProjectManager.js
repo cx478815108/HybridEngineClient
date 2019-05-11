@@ -14,13 +14,6 @@ const fsTool = {
     }
 }
 
-class ProjectPage{
-    constructor(){
-        this.pageFolderName = '';
-        this.title          = '';
-    }
-}
-
 class ProjectConfiguration{
     constructor(configJSON){
         this.identifier    = configJSON['identifier'];
@@ -38,30 +31,6 @@ class ProjectConfiguration{
         this.otherPageRootPath  = path.join(this.workDirectory, 'otherPages');
         // modal目录
         this.modalPageRootPath  = path.join(this.workDirectory, 'modalPages');
-
-        // 主页面
-        this.mainPage = null;
-        // 其他页面
-        this.otherPages = [];
-        // modal 页面
-        this.modalPages = [];
-        
-        // 读取项目信息
-        this.readProjectInfo();
-    }
-
-    readProjectInfo(){
-        if(!this.projectExist()) return ;
-        const configJSON = JSON.parse(fs.readFileSync(this.configJSONPath).toString());
-        
-        // mainPage
-        this.mainPage = new ProjectPage();
-        this.mainPage.pageFolderName = 'mainPage';
-        this.mainPage.title = configJSON.mainPage.title;
-
-        // other pages
-        const otherPagePath = path.join(configJSON.workDirectory, 'otherPages');
-        const childDirs = fsTool.getChildDirectory(otherPagePath);
     }
 
     projectExist(){

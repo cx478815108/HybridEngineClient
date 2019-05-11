@@ -12,28 +12,33 @@
                 <Input v-model="formData.identifier" placeholder="com.example.xxx" />
             </FormItem>
             </Col>
-        </Row>
-        <Row :gutter="32">
             <Col span="12">
             <FormItem label="App 名" label-position="top">
                 <Input v-model="formData.displayName" placeholder="App 名用于商店展示" />
             </FormItem>
             </Col>
+        </Row>
+        <Row :gutter="32">
             <Col span="12">
             <FormItem label="首页标题" label-position="top">
                 <Input v-model="formData.title" placeholder="第一个页面标题" />
             </FormItem>
             </Col>
-        </Row>
-        <Row :gutter="32">
             <Col span="12">
             <FormItem label="所有页面入口JS文件名" label-position="top">
                 <Input v-model="formData.entryJS" placeholder="index.js" />
             </FormItem>
             </Col>
-            <Col span="12">
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
             <FormItem label="所有页面入口HTML文件名" label-position="top">
                 <Input v-model="formData.entryHTML" placeholder="index.html" />
+            </FormItem>
+            </Col>
+            <Col span="12">
+            <FormItem label="所有页面入口CSS文件名" label-position="top">
+                <Input v-model="formData.entryCSS" placeholder="index.css" />
             </FormItem>
             </Col>
         </Row>
@@ -75,10 +80,12 @@
             identifier: '',
             entryJS: 'index.js',
             entryHTML: 'index.html',
-            workDirectory:'未选择'
+            workDirectory:'未选择',
+            entryCSS:'index.css'
         },
         queryFileExist:false,
-        workDirectoryInfo:"请选择保存的目录"
+        workDirectoryInfo:"请选择保存的目录",
+        selectedFolder:false
       }
     },
     methods:{
@@ -94,6 +101,7 @@
         if(fs.lstatSync(file).isDirectory()){
           this.formData.workDirectory = file;
           this.workDirectoryInfo = `已选择：${file}`;
+          this.selectedFolder = true;
         }
         else{
           this.$Message.error({content:"拖拽的不是目录"});
@@ -105,6 +113,7 @@
             title: '请选择一个文件夹用于保存工程'
           });
         if(!list || !list.length) return;
+        this.selectedFolder = true;
         this.workDirectoryInfo = `已选择：${list[0]}`;
         this.formData.workDirectory = list[0];
       },
@@ -147,6 +156,11 @@
       saveProject(){
         const result = this.checkParameters();
         if(!result){ return ;}
+
+        if(!this.selectedFolder){
+          this.$Message.error({content:"请选择保存目录"});
+          return ;
+        }
 
         // 制作模型
         const data = JSON.parse(JSON.stringify(this.formData));
