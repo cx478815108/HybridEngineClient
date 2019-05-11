@@ -26,10 +26,10 @@ class AppManager{
 
        // 写入tokenhybrid.config.json
        const configJSON = p.getMainConfigJSON();
-       fs.writeFileSync(p.configJSONPath, JSON.stringify(configJSON, 4));
+       fs.writeFileSync(p.configJSONPath, JSON.stringify(configJSON, null, 2));
 
        const mainPageJSON = p.getMainPageJSON();
-       fs.writeFileSync(path.join(mainPagePath, 'config.json'), JSON.stringify(mainPageJSON, 4));
+       fs.writeFileSync(path.join(mainPagePath, 'config.json'), JSON.stringify(mainPageJSON, null,2));
 
        AppDB.saveNewAppTemplate(appTemplate);
        return true;

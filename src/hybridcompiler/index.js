@@ -64,7 +64,7 @@ class Hybrid{
                         prefix: '@@',
                         basepath: '@file'
                     }))
-                    .pipe(rename('main.html'))
+                    .pipe(rename(item.name))
                     .pipe(vfs.dest(item.outputPath));
             }
 

@@ -25,7 +25,7 @@ class AppTemplate{
         this.otherPageRootPath  = path.join(this.workDirectory, 'otherPages');
         
         // modal目录
-        this.modalPageRootPath  = path.join(this.workDirectory, 'modalPages');
+        this.modalPageRootPath  = path.join(this.workDirectory, 'mainPage', 'modalPages');
 
         this.ensurePath();
     }

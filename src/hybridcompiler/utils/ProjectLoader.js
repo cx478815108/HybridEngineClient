@@ -3,12 +3,23 @@ const fs   = require('fs-extra');
 
 const fsTool = {
     getChildDirectory(dirPath){
+        if(!fs.existsSync(dirPath)) return [];
         return fs.readdirSync(dirPath)
         .map((v)=>{
             return path.join(dirPath, v);
         })
         .filter((v)=>{
             return fs.lstatSync(v).isDirectory();
+        });
+    },
+    getFiles(dirPath, ext){
+        if(!fs.existsSync(dirPath)) return [];
+        return fs.readdirSync(dirPath)
+        .map((v)=>{
+            return path.join(dirPath, v);
+        })
+        .filter((v)=>{
+            return path.extname(v) === ext;
         });
     }
 }
@@ -42,49 +53,63 @@ class ProjectLoader{
         const entryJS      = this.configJSON.entryJS;
         
         const mainOutputPath = path.join(cwd, 'dist', 'mainPage');
-        
-        const mainHTMLPath = path.join(cwd, 'mainPage', entryHTML);
-        const mainHTMLItem = {
-            path: mainHTMLPath,
-            outputPath: mainOutputPath
-        };
-        this.htmlItems.push(mainHTMLItem);
+        this.htmlItems.push({
+            path: path.join(cwd, 'mainPage', entryHTML),
+            outputPath : mainOutputPath,
+            name: 'main.html'
+        });
+
+        // modal Pages
+        const modalHTMLs = fsTool.getFiles(path.join(cwd, 'mainPage', 'modalPages'), '.html');
+        for(let item of modalHTMLs){
+            this.htmlItems.push({
+                path: item,
+                outputPath: path.join(cwd, 'dist', 'mainPage' ,'modalPages'),
+                name: path.basename(item)
+            });
+        }
 
         const mainCSSPath = path.join(cwd, 'mainPage', entryCSS);
-        const mainCSSItem = {
+        this.cssItems.push({
             path: mainCSSPath,
             outputPath: mainOutputPath
-        };   
-        this.cssItems.push(mainCSSItem);     
+        });     
 
         const mainJSPath = path.join(cwd, 'mainPage', entryJS);
-        const mainJSItem = {
+        this.jsItems.push({
             path: mainJSPath,
             outputPath: mainOutputPath
-        };
-        this.jsItems.push(mainJSItem);
+        });
         
         const otherPageFolders = fsTool.getChildDirectory(path.join(cwd, 'otherPages'));
         for(let folder of otherPageFolders){
             const folderName = path.basename(folder);
             const outputPath = path.join(cwd, 'dist', 'otherPages', folderName);
-            const htmlItem = {
+            this.htmlItems.push({
                 path: path.join(folder, entryHTML),
-                outputPath
-            }
-            this.htmlItems.push(htmlItem);
+                outputPath,
+                name: "main.html"
+            });
 
-            const cssItem = {
+            // modal Pages
+            const modalHTMLs = fsTool.getFiles(path.join(cwd, 'otherPages', folderName, 'modalPages'), '.html');
+            for(let item of modalHTMLs){
+                this.htmlItems.push({
+                    path: item,
+                    outputPath: path.join(outputPath ,'modalPages'),
+                    name: path.basename(item)
+                });
+            }
+
+            this.cssItems.push({
                 path: path.join(folder, entryCSS),
                 outputPath
-            }
-            this.cssItems.push(cssItem); 
+            }); 
 
-            const jsItem = {
+            this.jsItems.push({
                 path: path.join(folder, entryJS),
                 outputPath
-            };
-            this.jsItems.push(jsItem);
+            });
         }
     }
 }
