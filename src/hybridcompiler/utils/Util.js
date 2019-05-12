@@ -32,6 +32,18 @@ module.exports = {
         });
         return r;
     },
+    parseMarginOrPadding(name, val){
+        const list = val.split(' ').filter((v)=>{
+            return v.length > 0;
+        });
+        const r = {};
+        const props = ["top" ,"left", "bottom", "right"];
+        if(list.length === 1) list[3] = list[2] = list[1] = list[0];
+        for(let i = 0;i < 4; i++){
+            r[`${name}-${props[i]}`] = list[i] || "0px";
+        }
+        return r;
+    },
     parseCSSString(text){
         if (!text || !text.length) return {};
         const reg = new RegExp("/(?<!:)\\/\\/.*|\\/\\*(\\s|.)*?\\*\\/", 'g');
@@ -56,7 +68,17 @@ module.exports = {
                     if (s.length) {
                         let g = s.split(':');
                         if (g.length === 2) {
-                            r[selector][g[0].trim()] = g[1].trim();
+                            const attrname = g[0].trim();
+                            const attrval  = g[1].trim();
+                            if(attrname === 'margin' || attrname === 'padding'){
+                                const m = this.parseMarginOrPadding(attrname, attrval);
+                                for(let key in m){
+                                    r[selector][key] = m[key];
+                                }
+                            }
+                            else{
+                                r[selector][attrname] = attrval;
+                            }
                         }
                     }
                 });
@@ -94,9 +116,6 @@ module.exports = {
             o.p = parameters;
         }
         return o;
-    },
-    parseFontString(text){
-        
     },
     parseCalcString(exp, replace){
         const temp = [];
