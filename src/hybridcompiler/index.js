@@ -4,9 +4,9 @@ const Organizer     = require('./organizer');
 
 const testJSON = {
     "workDirectory": "/Users/feelings/FrontEnd/Token小程序/helloworld",
-    "entryJS": "index.js",
-    "entryHTML": "index.html",
-    "entryCSS": "index.css"
+    "entryJS"      : "index.js",
+    "entryHTML"    : "index.html",
+    "entryCSS"     : "index.css"
 }
 
 class Hybrid{
@@ -25,7 +25,9 @@ class Hybrid{
         })
         .then(()=>{
             console.log("编译完成");
-        });
+        }).catch((error=>{
+            console.log(error);
+        }));
     }
 }
 

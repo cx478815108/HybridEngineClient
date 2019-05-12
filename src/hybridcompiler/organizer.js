@@ -17,8 +17,11 @@ class Organizer{
 
     build(loader){
         return new Promise((resolve, reject)=>{
-            // 拷贝config.json
-            this.processConfigJSONs(loader.getPageConfigJSONs())
+            this.processImages(loader)
+            .then(()=>{
+                // 拷贝config.json
+                return this.processConfigJSONs(loader.getPageConfigJSONs());
+            })
             .then(()=>{
                 // 处理html文件
                 return this.processHTMLFiles(loader.getHTMLItems());
@@ -34,6 +37,28 @@ class Organizer{
             .then(resolve)
             .catch(reject);
         });
+    }
+
+    processImages(loader){
+        return new Promise((resolve, reject)=>{
+            const cwd = loader.configJSON.workDirectory;
+            const imageSrcs = [
+                `${cwd}/**/*.png`,
+                `${cwd}/**/*.jpg`,
+                `${cwd}/**/*.jpeg`,
+                `${cwd}/**/*.gif`,
+            ]
+
+            const target = path.join(cwd, 'dist', 'images');
+
+            vfs.src(imageSrcs)
+            .pipe(rename((file)=>{
+                file.dirname = "";
+            }))
+            .pipe(vfs.dest(target));
+
+            resolve();
+        })
     }
 
     processConfigJSONs(configJSONs){

@@ -8,6 +8,7 @@ const CommonStore  = require('./utils/CommonStore')
 const fsTool       = require('./utils/FSTool');
 const vfs          = require('vinyl-fs');
 const zip          = require('gulp-zip');
+const rename       = require("gulp-rename");
 
 class Compiler{
 
@@ -30,12 +31,21 @@ class Compiler{
 
         // 压缩打包必要的文件
         const src = [
+            `${cwd}/images/*.*`,
             `${cwd}/**/main.js`,
             `${cwd}/**/config.json`,
             `${cwd}/**/production.json`];
+        
         vfs.src(src)
-            .pipe(zip('production.zip'))
-            .pipe(vfs.dest(cwd));
+        .pipe(rename((file)=>{
+            //  去掉mainPage otherPages等目录
+            file.dirname = file.dirname.replace('mainPage', '').replace('otherPages/', '');
+            if(file.dirname === '.') {
+                file.dirname = 'images'
+            }
+        }))
+        .pipe(zip('production.zip'))
+        .pipe(vfs.dest(cwd));
     }
 
     compileSinglePage(pageFolder){
