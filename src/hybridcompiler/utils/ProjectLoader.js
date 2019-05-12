@@ -1,35 +1,14 @@
 const path = require('path');
 const fs   = require('fs-extra');
-
-const fsTool = {
-    getChildDirectory(dirPath){
-        if(!fs.existsSync(dirPath)) return [];
-        return fs.readdirSync(dirPath)
-        .map((v)=>{
-            return path.join(dirPath, v);
-        })
-        .filter((v)=>{
-            return fs.lstatSync(v).isDirectory();
-        });
-    },
-    getFiles(dirPath, ext){
-        if(!fs.existsSync(dirPath)) return [];
-        return fs.readdirSync(dirPath)
-        .map((v)=>{
-            return path.join(dirPath, v);
-        })
-        .filter((v)=>{
-            return path.extname(v) === ext;
-        });
-    }
-}
+const fsTool = require('./FSTool');
 
 class ProjectLoader{
     constructor(configJSON){
-        this.configJSON = configJSON;
-        this.htmlItems  = [];
-        this.cssItems   = [];
-        this.jsItems    = [];
+        this.configJSON      = configJSON;
+        this.htmlItems       = [];
+        this.cssItems        = [];
+        this.jsItems         = [];
+        this.pageConfigJSONs = [];
 
         this.makePathInfo();
     }
@@ -46,6 +25,10 @@ class ProjectLoader{
         return this.jsItems;
     }
 
+    getPageConfigJSONs(){
+        return this.pageConfigJSONs;
+    }
+
     makePathInfo(){
         const cwd          = this.configJSON.workDirectory;
         const entryHTML    = this.configJSON.entryHTML;
@@ -56,8 +39,14 @@ class ProjectLoader{
         this.htmlItems.push({
             path: path.join(cwd, 'mainPage', entryHTML),
             outputPath : mainOutputPath,
-            name: 'main.html'
+            name: 'main'
         });
+
+
+        this.pageConfigJSONs.push({
+            path: path.join(cwd, 'mainPage', 'config.json'),
+            outputPath : mainOutputPath,
+        })
 
         // modal Pages
         const modalHTMLs = fsTool.getFiles(path.join(cwd, 'mainPage', 'modalPages'), '.html');
@@ -88,8 +77,13 @@ class ProjectLoader{
             this.htmlItems.push({
                 path: path.join(folder, entryHTML),
                 outputPath,
-                name: "main.html"
+                name: "main"
             });
+
+            this.pageConfigJSONs.push({
+                path: path.join(folder, 'config.json'),
+                outputPath
+            })
 
             // modal Pages
             const modalHTMLs = fsTool.getFiles(path.join(cwd, 'otherPages', folderName, 'modalPages'), '.html');

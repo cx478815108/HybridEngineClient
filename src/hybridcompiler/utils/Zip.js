@@ -1,26 +1,26 @@
 const KeyMapper = {
-    "uid":'u',
-    "tagName":"tn",
-    "text":'t',
-    "attributes":'a',
-    "textData":'ta',
-    "dynamicAttrsData":"da",
-    "layoutKey":'lk',
-    "styleKey": 'sk',
-    "isForNode":'in',
-    "children":'c',
-    "isDynamicText":'it',
-    "component":'ct',
-    "static" :"s",
-    "bind":"b",
-    "forKeyPath": "f",
-    "clickInfo" : "ci",
-    "id" : "i",
-    "fontStyle":"fi",
-    "autoHeight" :"ah",
-    "autoWidth" :"aw",
-    "stickyX" : "sx",
-    "stickyY" : "sy"
+    "uid"             : 'u',
+    "tagName"         : "tn",
+    "text"            : 't',
+    "attributes"      : 'a',
+    "textData"        : 'ta',
+    "dynamicAttrsData": "da",
+    "layoutKey"       : 'lk',
+    "styleKey"        : 'sk',
+    "isForNode"       : 'in',
+    "children"        : 'c',
+    "isDynamicText"   : 'it',
+    "component"       : 'ct',
+    "static"          : "s",
+    "bind"            : "b",
+    "forKeyPath"      : "f",
+    "clickInfo"       : "ci",
+    "id"              : "i",
+    "fontStyle"       : "fi",
+    "autoHeight"      : "ah",
+    "autoWidth"       : "aw",
+    "stickyX"         : "sx",
+    "stickyY"         : "sy"
 }
 
 class Node{
@@ -45,7 +45,7 @@ class Node{
             this.f = json.forKeyPath.zip();
         }
 
-        if (json.textData.length){
+        if (json.textData && json.textData.length){
             let ta = [];
             for (let i = 0; i < json.textData.length; i++) {
                 const textDataNode = json.textData[i];

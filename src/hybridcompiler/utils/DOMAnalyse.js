@@ -41,13 +41,13 @@ class DOMAnalyse {
     }
 
     nodeWalker(xmlNode, nodeProcess) {
-        //push栈操作
+        // push栈操作
         this.pushStack(xmlNode);
         nodeProcess(xmlNode);
         xmlNode.children.forEach((childNode) => {
             this.nodeWalker(childNode, nodeProcess);
         });
-        //pop栈操作
+        // pop栈操作
         this.popStack(xmlNode);
         const list = ['table','flowlist'];
         if (list.includes(xmlNode.tagName)) {
@@ -55,7 +55,8 @@ class DOMAnalyse {
         }
     }
 
-    start(){
+    startAnalyse(document){
+        this.rootNode = document.rootNode;
         this.nodeWalker(this.rootNode,(xmlNode)=>{
             if (xmlNode.isForNode) {
                 // 处理for循环语句的前缀

@@ -14,14 +14,14 @@ module.exports = class HTMLDocument {
         this.rootNode = null;
     }
 
-    create(htmlText) {
+    createDOM(htmlText) {
         let nodeStack = [];
         let rootNode = null;
         const parser = new HTMLParser.Parser({
             onopentag: function (tagName, attributes) {
-                const node = new HTMLNode();
-                node.tagName = tagName;
-                node.setAttributes(attributes)
+                const node      = new HTMLNode();
+                node.tagName    = tagName;
+                node.attributes = attributes;
                 nodeStack.push(node);
 
                 if (!rootNode) {
@@ -32,7 +32,7 @@ module.exports = class HTMLDocument {
                 const currentNode = nodeStack.top();
                 const t = text.trim();
                 if (t.length) {
-                    currentNode.setText(t);
+                    currentNode.text = t;
                 }
             },
             onclosetag: function (tagName) {
@@ -48,7 +48,6 @@ module.exports = class HTMLDocument {
         });
         parser.write(htmlText);
         parser.end();
-        nodeStack = [];
         this.rootNode = rootNode;
         return rootNode;
     }

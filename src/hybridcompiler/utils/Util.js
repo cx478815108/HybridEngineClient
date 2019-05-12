@@ -20,6 +20,18 @@ module.exports = {
         o.dataKey = g[1];
         return o;
     },
+    parseStyleString(styleString){
+        const r = {};
+        styleString.split(';').filter((v) => {
+            return v.length > 0;
+        }).forEach((v) => {
+            const list = v.split(':');
+            if (list.length === 2) {
+                r[list[0]] = list[1];
+            }
+        });
+        return r;
+    },
     parseCSSString(text){
         if (!text || !text.length) return {};
         const reg = new RegExp("/(?<!:)\\/\\/.*|\\/\\*(\\s|.)*?\\*\\/", 'g');

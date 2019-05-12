@@ -1,6 +1,5 @@
-const HTMLDocument  = require('./dom/HTMLDocument');
 const ProjectLoader = require('./utils/ProjectLoader');
-const Compiler      = require('./compiler');
+// const Compiler      = require('./compiler');
 
 const fs   = require("fs-extra")
 const path = require('path');
@@ -18,13 +17,14 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 const rollupJSON  = require('rollup-plugin-json');
 
 const testJSON = {
-    "bundle.identifier": "aaa",
-    "displayName"      : "bbb",
-    "workDirectory"    : "/Users/feelings/FrontEnd/Token小程序/helloworld",
-    "entryJS"          : "index.js",
-    "entryHTML"        : "index.html",
-    "entryCSS"         : "index.css"
+    "bundle.identifier": "helloworld",
+    "displayName": "helloworld",
+    "workDirectory": "/Users/feelings/FrontEnd/Token小程序/helloworld",
+    "entryJS": "index.js",
+    "entryHTML": "index.html",
+    "entryCSS": "index.css"
 }
+
 
 class Hybrid{
     constructor(){
@@ -32,13 +32,23 @@ class Hybrid{
     }
 
     build(configJSON){
+        const json = testJSON;
+        
+        // 工具预编译
         const loader = new ProjectLoader(testJSON);
         this.buildTargetFiles(loader);
+
+        // const compiler = new Compiler();
+        // compiler.startCompile(json);
     }
 
     buildTargetFiles(loader){
-        // 处理html文件
-        this.processHTMLFiles(loader.getHTMLItems())
+        // 拷贝config.json
+        this.processConfigJSONs(loader.getPageConfigJSONs())
+        .then(()=>{
+            // 处理html文件
+            return this.processHTMLFiles(loader.getHTMLItems());
+        })
         .then(()=>{
             // 处理 css 文件
             return this.processCSSFiles(loader.getCSSItems());
@@ -50,6 +60,15 @@ class Hybrid{
         .catch((error)=>{
             console.log("出错了",error);
         });
+    }
+
+    processConfigJSONs(configJSONs){
+        return new Promise((resolve, reject)=>{
+            for(let item of configJSONs){
+                vfs.src(item.path).pipe(vfs.dest(item.outputPath));
+            }
+            resolve();
+        })
     }
 
     processHTMLFiles(htmlItems){
@@ -64,7 +83,12 @@ class Hybrid{
                         prefix: '@@',
                         basepath: '@file'
                     }))
-                    .pipe(rename(item.name))
+                    .pipe(rename(function (path) {
+                        if(item.name.endsWith('.html')){
+                            item.name = item.name.replace('.html','');
+                        }
+                        path.basename = item.name;
+                      }))
                     .pipe(vfs.dest(item.outputPath));
             }
 

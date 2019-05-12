@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "compiler",
+            "name": "compilerIndex",
             "program": "${workspaceFolder}/src/hybridcompiler/index.js"
         }
     ]
