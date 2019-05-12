@@ -16,22 +16,23 @@ const rollupJSON  = require('rollup-plugin-json');
 class Organizer{
 
     build(loader){
-        // 拷贝config.json
-        this.processConfigJSONs(loader.getPageConfigJSONs())
-        .then(()=>{
-            // 处理html文件
-            return this.processHTMLFiles(loader.getHTMLItems());
-        })
-        .then(()=>{
-            // 处理 css 文件
-            return this.processCSSFiles(loader.getCSSItems());
-        })
-        .then(()=>{
-            // 处理js 文件
-            return this.processJSFiles(loader.getJsItems());
-        })
-        .catch((error)=>{
-            console.log("出错了",error);
+        return new Promise((resolve, reject)=>{
+            // 拷贝config.json
+            this.processConfigJSONs(loader.getPageConfigJSONs())
+            .then(()=>{
+                // 处理html文件
+                return this.processHTMLFiles(loader.getHTMLItems());
+            })
+            .then(()=>{
+                // 处理 css 文件
+                return this.processCSSFiles(loader.getCSSItems());
+            })
+            .then(()=>{
+                // 处理js 文件
+                return this.processJSFiles(loader.getJsItems());
+            })
+            .then(resolve)
+            .catch(reject);
         });
     }
 

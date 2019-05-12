@@ -1,5 +1,5 @@
 const ProjectLoader = require('./utils/ProjectLoader');
-// const Compiler      = require('./compiler');
+const Compiler      = require('./compiler');
 const Organizer     = require('./organizer');
 
 const testJSON = {
@@ -12,18 +12,23 @@ const testJSON = {
 class Hybrid{
     build(configJSON){
         const json = testJSON;
-        
+
         // 加载工程信息
-        const loader = new ProjectLoader(testJSON);
+        const loader = new ProjectLoader(json);
         
         // 工具预编译
         const organizer = new Organizer();
-        organizer.build(loader);
-
-        // const compiler = new Compiler();
-        // compiler.startCompile(json);
+        organizer.build(loader)
+        .then(()=>{
+            const compiler = new Compiler();
+            return compiler.build(json);
+        })
+        .then(()=>{
+            console.log("编译完成");
+        });
     }
 }
 
 const hybrid = new Hybrid();
 hybrid.build();
+module.exports = hybrid;

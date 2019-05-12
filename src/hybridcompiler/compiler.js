@@ -1,4 +1,4 @@
-const fs           = require('fs-extra');
+const fs           = require('fs');
 const path         = require('path');
 const HTMLDocument = require('./dom/HTMLDocument');
 const Util         = require("./utils/Util");
@@ -6,26 +6,36 @@ const DOMAnalyse   = require('./utils/DOMAnalyse');
 const Zip          = require('./utils/Zip');
 const CommonStore  = require('./utils/CommonStore')
 const fsTool       = require('./utils/FSTool');
-
-const testJSON = {
-    "bundle.identifier": "helloworld",
-    "displayName": "helloworld",
-    "workDirectory": "/Users/feelings/FrontEnd/Token小程序/helloworld",
-    "entryJS": "index.js",
-    "entryHTML": "index.html",
-    "entryCSS": "index.css"
-}
+const vfs          = require('vinyl-fs');
+const zip          = require('gulp-zip');
 
 class Compiler{
-    constructor(){
 
+    build(configJSON){
+        return new Promise((resolve, reject)=>{
+            this.startCompile(configJSON);
+            resolve();
+        });
     }
 
     startCompile(configJSON){
-        const cwd                = path.join(configJSON.workDirectory, 'dist');
-        const pageFolder         = path.join(cwd, 'mainPage');
-        const pageProductionJSON = this.compileSinglePage(pageFolder);
-        console.log(pageProductionJSON);
+        const cwd  = path.join(configJSON.workDirectory, 'dist');
+        const dirs = [path.join(cwd, 'mainPage'), 
+                      ...fsTool.getChildDirectory(path.join(cwd, 'otherPages'))];
+        for(let dir of dirs){
+            const productionJSON = this.compileSinglePage(dir);
+            const saveText = JSON.stringify(productionJSON);
+            fs.writeFileSync(path.join(dir, 'production.json'), saveText);
+        }
+
+        // 压缩打包必要的文件
+        const src = [
+            `${cwd}/**/main.js`,
+            `${cwd}/**/config.json`,
+            `${cwd}/**/production.json`];
+        vfs.src(src)
+            .pipe(zip('production.zip'))
+            .pipe(vfs.dest(cwd));
     }
 
     compileSinglePage(pageFolder){
@@ -74,7 +84,6 @@ class Compiler{
         document = this.analyseDOM(document)
         // 对json进行压缩处理
         let zipedTreeJSON = Zip(document.rootNode);
-        zipedTreeJSON     = JSON.stringify(zipedTreeJSON);
         return zipedTreeJSON;
     }
 
@@ -138,12 +147,11 @@ class Compiler{
             }
 
             // 处理完毕
-            xmlNode.processFinish();
+            // xmlNode.processFinish();
         });
 
         return document;
     }
 }
 
-(new Compiler).startCompile(testJSON);
 module.exports = Compiler;
