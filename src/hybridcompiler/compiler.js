@@ -1,4 +1,4 @@
-const fs           = require('fs');
+const fs           = require('fs-extra');
 const path         = require('path');
 const HTMLDocument = require('./dom/HTMLDocument');
 const Util         = require("./utils/Util");
@@ -20,32 +20,53 @@ class Compiler{
     }
 
     startCompile(configJSON){
+        const productionPath = path.join(configJSON.workDirectory, 'production');
+        // 1. 确保production 文件夹为空 ，不存在则会创建
+        fs.emptyDirSync(productionPath);
+        
+        // 2.  首先对每个页面进行编译生成production.json 保存到对应的目录下
         const cwd  = path.join(configJSON.workDirectory, 'dist');
-        const dirs = [path.join(cwd, 'mainPage'), 
-                      ...fsTool.getChildDirectory(path.join(cwd, 'otherPages'))];
+        
+        // 2.1 编译主页面并保存
+        const mainPagePath   = path.join(cwd, 'mainPage');
+        const productionJSON = this.compileSinglePage(mainPagePath);
+        const saveText       = JSON.stringify(productionJSON);
+        fs.writeFileSync(path.join(productionPath, 'production.json'), saveText);
+
+        const jsPath = path.join(mainPagePath, 'main.js');
+        fs.copySync(jsPath, path.join(productionPath, 'main.js'));
+
+        const configJSONPath = path.join(mainPagePath, 'config.json');
+        fs.copySync(configJSONPath, path.join(productionPath, 'config.json'));
+
+        // 2.2 编译其他页面并保存
+        const dirs = fsTool.getChildDirectory(path.join(cwd, 'otherPages'));
         for(let dir of dirs){
+            const pageFolderName = path.basename(dir);
+            const savePath = path.join(productionPath, pageFolderName);
+            fs.ensureDirSync(savePath);
+
             const productionJSON = this.compileSinglePage(dir);
             const saveText = JSON.stringify(productionJSON);
-            fs.writeFileSync(path.join(dir, 'production.json'), saveText);
+            fs.writeFileSync(path.join(savePath, 'production.json'), saveText);
+
+            const jsPath = path.join(dir, 'main.js');
+            fs.copySync(jsPath, path.join(savePath, 'main.js'));
+
+            const configJSONPath = path.join(dir, 'config.json');
+            fs.copySync(configJSONPath, path.join(savePath, 'config.json'));
+        }
+
+        // 3. 对assets文件夹进行复制
+        const assetsPath = path.join(cwd, 'assets');
+        if(fs.lstatSync(assetsPath).isDirectory()){
+            fs.copySync(assetsPath, path.join(productionPath, 'assets'));
         }
 
         // 压缩打包必要的文件
-        const src = [
-            `${cwd}/images/*.*`,
-            `${cwd}/**/main.js`,
-            `${cwd}/**/config.json`,
-            `${cwd}/**/production.json`];
-        
-        vfs.src(src)
-        .pipe(rename((file)=>{
-            //  去掉mainPage otherPages等目录
-            file.dirname = file.dirname.replace('mainPage', '').replace('otherPages/', '');
-            if(file.dirname === '.') {
-                file.dirname = 'images'
-            }
-        }))
+        vfs.src(`${productionPath}/**/*`)
         .pipe(zip('production.zip'))
-        .pipe(vfs.dest(cwd));
+        .pipe(vfs.dest(productionPath));
     }
 
     compileSinglePage(pageFolder){

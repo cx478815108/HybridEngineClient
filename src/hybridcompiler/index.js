@@ -13,6 +13,10 @@ class Hybrid{
     build(configJSON){
         const json = testJSON;
 
+        const compiler = new Compiler();
+        return compiler.build(json);
+
+
         // 加载工程信息
         const loader = new ProjectLoader(json);
         
@@ -24,8 +28,9 @@ class Hybrid{
             return compiler.build(json);
         })
         .then(()=>{
-            console.log("编译完成");
-        }).catch((error=>{
+            // console.log("编译完成");
+        })
+        .catch((error=>{
             console.log(error);
         }));
     }
