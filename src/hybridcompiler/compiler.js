@@ -63,6 +63,13 @@ class Compiler{
             fs.copySync(assetsPath, path.join(productionPath, 'assets'));
         }
 
+        // 4. 将tokenhybrid.config.json 复制进去
+        const projConfigName = 'tokenhybrid.config.json';
+        const projConfigPath = path.join(configJSON.workDirectory, projConfigName);
+        if(fs.existsSync(projConfigPath)){
+            fs.copySync(projConfigPath, path.join(productionPath, projConfigName));
+        }
+
         // 压缩打包必要的文件
         vfs.src(`${productionPath}/**/*`)
         .pipe(zip('production.zip'))
@@ -113,6 +120,7 @@ class Compiler{
         document = this.processDOMAttributes(document, styleStore, layoutStore);
         // 要应用到上一次的 forloop 动态attributes等
         document = this.analyseDOM(document)
+
         // 对json进行压缩处理
         let zipedTreeJSON = Zip(document.rootNode);
         return zipedTreeJSON;
@@ -150,8 +158,6 @@ class Compiler{
 
     processDOMAttributes(document, styleStore, layoutStore){
         const rootNode = document.rootNode;
-        // 解除循环
-        rootNode.broken();
     
         const nodeWalker = (xmlNode, func) => {        
             // 给外界处理

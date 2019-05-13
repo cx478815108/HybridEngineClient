@@ -63,14 +63,6 @@ module.exports = class HTMLNode{
         this.style = Object.assign(cssStyle, this.style);
     }
 
-    broken(){
-        this.parent = null;
-        delete(this.parent);
-        this.children.forEach((childNode)=>{
-            childNode.broken();
-        });
-    }
-
     // 此接口由外界调用
     processAttributes(){
         this.id   = this.attributes["id"] || '';

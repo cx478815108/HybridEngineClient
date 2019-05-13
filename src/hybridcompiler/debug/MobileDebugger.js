@@ -92,8 +92,8 @@ class MobileDebugger{
         try {
             const data = JSON.parse(buffData.toString());
             if(data.identify === 'iOS'){
-                if(typeof self.config.onConnected === 'function'){
-                    self.config.onConnected();
+                if(typeof this.config.onConnected === 'function'){
+                    this.config.onConnected();
                 }
             }
         } catch (error) {
@@ -154,13 +154,17 @@ class MobileDebugger{
 
     transportMessage(){
         if(!this.mobileSocket) return ;
-        const msg = SocketMessage.makeNormalTypeMessage('这是标题', {
-            code: 123,
-            parameters:{
-                name:'cx'
-            }
+        // const msg = SocketMessage.makeNormalTypeMessage('这是标题', {
+        //     code: 123,
+        //     parameters:{
+        //         name:'cx'
+        //     }
+        // });
+        // this.mobileSocket.write(msg);
+        const path = '/Users/feelings/FrontEnd/Token小程序/helloworld/production/production.zip';
+        this.transportFile(path, (msg)=>{
+            console.log(msg);
         });
-        this.mobileSocket.write(msg);
     }
 
     transportFile(transportPath, process){
@@ -175,7 +179,7 @@ class MobileDebugger{
 
         rs.on('data', function (chunk) {
             const message = SocketMessage.makeBionaryTypeMessage('data', chunk);
-            self.mobileSocket.write(buff);
+            self.mobileSocket.write(message);
         });
     
         rs.on('end', function (chunk) {
@@ -184,12 +188,13 @@ class MobileDebugger{
                 msg:"传输完成"
             }));
             if(process){
-                process("传送完毕\n" + uploadPath);
+                process("传送完毕\n");
             }
         });
     
         // 监听错误
         rs.on('error', function (err) {
+            console.log(err);
             self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
                 code:0,
                 msg:"文件加载错误"
