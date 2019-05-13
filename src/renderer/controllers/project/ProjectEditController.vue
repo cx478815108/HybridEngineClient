@@ -12,8 +12,10 @@
       <div id = "head">
         <Table border  :show-header = "false" size = "small" :columns="columns" :data="rows">
           <template slot="action" slot-scope="{ row, index }">
-            <Button v-if = 'index==0' type="success" size="small" style="margin-right: 5px" >打开目录</Button>
-            <Button v-if = 'index==1' type="success" size="small" style="margin-right: 5px" >启动服务</Button>
+            <Button v-if = 'index==0' type="success" 
+            size="small" style="margin-right: 5px" >打开目录</Button>
+            <Button v-if = 'index==1 && !isSocketRuning' type="success" 
+            size="small" style="margin-right: 5px" @click = "startServer()">启动服务</Button>
           </template>
         </Table>
       </div>
@@ -26,7 +28,7 @@
           <div class = "vsep"></div>
         </div>
         <div class = "barItem">
-          <Button class = "barItemButton" type="text"><Icon size = '16' style = 'margin-right:4px' type="ios-link-outline" />传输</Button>
+          <Button class = "barItemButton" type="text" @click = "onTransportClick()"><Icon size = '16' style = 'margin-right:4px' type="ios-link-outline" />传输</Button>
           <div class = "vsep"></div>
         </div>
         <div class = "barItem">
@@ -43,9 +45,11 @@
 
 <script>
   const spawn = require('child_process').spawn;
+  import MobileDebugger from '../../../hybridcompiler/debug/MobileDebugger'
   export default {
     data(){
       return {
+        isSocketRuning:false,
         isCompiling:false,
         projectConfig:this.$route.params,
         columns:[
@@ -59,6 +63,32 @@
       }
     },
     methods:{
+      startServer(){
+        const self = this;
+        MobileDebugger.startServer({
+          onStart(ipAddress){
+            self.isSocketRuning = true;
+            self.rows[1].info = ipAddress;
+            self.$Message.success({content:"调试服务已启动"});
+          },
+          onConnected(){
+            self.rows[2].info = '已连接';
+            self.$Message.success({content:"iPhone客户端已连接"});
+          },
+          onClose(){
+            self.rows[2].info = '未连接';
+            self.$Message.error({content:"和iPhone的调试已经断开"});
+          },
+          onError(error){
+            self.isSocketRuning = false;
+            self.rows[2].info = '未连接';
+            self.$Message.error({content:"链接发生错误"});
+          }
+        });
+      },
+      onTransportClick(){
+        MobileDebugger.transportMessage();
+      },
       onBackItemClick(){
         this.$router.push({name:'manage'});
       },

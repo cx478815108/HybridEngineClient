@@ -17,7 +17,11 @@ class Organizer{
 
     build(loader){
         return new Promise((resolve, reject)=>{
-            this.processHTMLFiles(loader.getHTMLItems())
+            this.processConfigJSONs(loader.getPageConfigJSONs())
+            .then(()=>{
+                // 处理html文件
+                return this.processHTMLFiles(loader.getHTMLItems());
+            })
             .then(()=>{
                 // 处理 css 文件
                 return this.processCSSFiles(loader.getCSSItems());
@@ -29,6 +33,17 @@ class Organizer{
             .then(resolve)
             .catch(reject);
         });
+    }
+
+    processConfigJSONs(configJSONs){
+        return new Promise((resolve, reject)=>{
+            for(let item of configJSONs){
+                fs.ensureDirSync(item.outputPath);
+                const targetPath = path.join(item.outputPath, 'config.json');
+                fs.copySync(item.path, targetPath);
+            }
+            resolve();
+        })
     }
 
     processHTMLFiles(htmlItems){

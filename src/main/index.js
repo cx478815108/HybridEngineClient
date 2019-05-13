@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron'
+// const MobileDebugger = require('../hybridcompiler/debug/MobileDebugger')
 
 /**
  * Set `__static` path to static files in production
@@ -20,13 +21,18 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    show: false
   })
 
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
-    mainWindow = null
+    mainWindow = null;
+  })
+
+  mainWindow.on('ready-to-show', function (){
+    mainWindow.show();
   })
 
   mainWindow.webContents.openDevTools();
