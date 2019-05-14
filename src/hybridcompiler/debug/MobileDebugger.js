@@ -96,9 +96,7 @@ class MobileDebugger{
                     this.config.onConnected();
                 }
             }
-        } catch (error) {
-            console.log(buffData.toString());
-        }
+        } catch (error) {}
     }
 
     startServer(config){
@@ -194,7 +192,6 @@ class MobileDebugger{
     
         // 监听错误
         rs.on('error', function (err) {
-            console.log(err);
             self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
                 code:0,
                 msg:"文件加载错误"

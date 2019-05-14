@@ -24,14 +24,23 @@ class AppDB{
         return fs.existsSync(appTemplate.configJSONPath);
     }
 
+    saveExistProject(configJSON){
+        const item = {
+            workDirectory: configJSON.workDirectory,
+            identifier   : configJSON["bundle.identifier"],
+            displayName  : configJSON.displayName,
+        }
+        this.saveNewAppTemplate(item);
+    }
+
     saveNewAppTemplate(appTemplate){
         const item = {
-            directory   : appTemplate.workDirectory,
+            workDirectory : appTemplate.workDirectory,
             identifier  : appTemplate.identifier,
             displayName : appTemplate.displayName,
         }
         const collections = this.db.get('recentProjects');
-        const existedItem = collections.find({ directory: appTemplate.workDirectory });
+        const existedItem = collections.find({ workDirectory: appTemplate.workDirectory });
         
         // 查看是否存在 存在就更新
         if(existedItem.value()){
@@ -41,11 +50,33 @@ class AppDB{
         collections.push(item).write();
     }
 
+    updateProjectsIndex(list){
+        const updatedList = [];
+        for(let item of list){
+            if(!item.workDirectory) { continue ;}
+            const jsonPath = path.join(item.workDirectory, 'tokenhybrid.config.json');
+            if(!fs.existsSync(jsonPath)){ continue ;}
+            try {
+                const json = JSON.parse(fs.readFileSync(jsonPath).toString());
+                const index = {
+                    workDirectory : json.workDirectory,
+                    identifier: json["bundle.identifier"],
+                    displayName : json.displayName,
+                };
+                if(index.workDirectory && index.identifier && index.displayName){
+                    updatedList.push(index)
+                }
+                this.db.set('recentProjects', updatedList).write();
+            } catch (error) {}
+        }
+        return updatedList;
+    }
+
     /* 获取所有的索引 */
     getRecentProjectsIndex(){
         this.db.read();
         const result = this.db.get('recentProjects').value();
-        return result;
+        return this.updateProjectsIndex(result);
     }
 
     /* 删除所有的索引 */
@@ -55,7 +86,7 @@ class AppDB{
 
     /* 根据工程目录删除索引 */
     removeRecentProject(workDirectory){
-        this.db.get('recentProjects').remove({ directory}).write();
+        this.db.get('recentProjects').remove({ workDirectory}).write();
     }
 
     static sharedDB(){

@@ -8,6 +8,7 @@ import 'iview/dist/styles/iview.css'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
+Vue.prototype.bus = new Vue();
 
 Vue.use(iView);
 

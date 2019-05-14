@@ -94,26 +94,6 @@
       },
       onCompileClick(){
         this.isCompiling = true;
-        const mainJSPath = '/Users/feelings/FrontEnd/electron-compiler/src/renderer/tool/test.js';
-        const child = spawn("node", [mainJSPath], {
-            stdio: ['pipe']
-        });
-
-        let log = '';
-        child.stdout.on('data', function (data) {
-          log += data.toString();
-        });
-
-        child.on('error', function (err) {
-          console.log('发生错误',err);
-            console.log(log);
-            this.isCompiling = false;
-        });
-
-        child.on('close', (code) => {
-          console.log(log);
-          this.isCompiling = false;
-        });
       }
     }
   }

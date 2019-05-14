@@ -64,7 +64,7 @@
 
 </template>
 
-<script>
+<script scoped>
   const fs = require('fs');
   const { dialog } = require('electron').remote;
   import AppManager from "../../tool/AppManager";
@@ -178,6 +178,8 @@
         const appTemplate = new AppTemplate(data);
         if(AppManager.createAppTemplate(appTemplate)){
           this.$Message.success({content:"保存成功"});
+          this.bus.$emit(AppEventKeys.updateExistedProjects);
+          this.bus.$emit(AppEventKeys.hiddenForms);
         }
         else{
           this.$Message.error({content:"保存失败"});

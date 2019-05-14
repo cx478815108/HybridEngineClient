@@ -38,6 +38,9 @@
 <script>
   export default {
     name: 'LandingPage',
+    created(){
+      this.$router.push({name:'project-page'})
+    },
     methods: {
       didPressedMenuItem(event){
       }
@@ -87,7 +90,8 @@
   }
 
   #controllerContent{
-    flex: 1;
+    width: 100%;
+    height: 100%;
     background-color: white;
     display: flex;
     overflow:scroll;
