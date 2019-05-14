@@ -106,7 +106,8 @@
             this.queryDeleteExist = true;
         },
         onCardClick(item){
-            this.$router.push({name:'edit',params:{}});
+            const params = JSON.parse(JSON.stringify(item));
+            this.$router.push({name:'edit', params});
         }
     }
   }

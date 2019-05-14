@@ -18,11 +18,11 @@
             size="small" style="margin-right: 5px" @click = "startServer()">启动服务</Button>
           </template>
         </Table>
+        <Progress v-if = "isCompiling" :percent="progressPercent" :stroke-width="5" />
       </div>
       <div id = "toolBar">
         <div class = "barItem">
-          <Button class = "barItemButton" type="text" :loading="isCompiling" 
-          @click = 'onCompileClick()'>
+          <Button class = "barItemButton" type="text" @click = 'onCompileClick()'>
             <Icon size = '16' style = 'margin-right:4px' type="ios-construct-outline" />编译
           </Button>
           <div class = "vsep"></div>
@@ -44,11 +44,15 @@
 </template>
 
 <script>
-  const spawn = require('child_process').spawn;
-  import MobileDebugger from '../../../hybridcompiler/debug/MobileDebugger'
+  import MobileDebugger from '../../../debug/MobileDebugger'
+  import fs from 'fs'
+  import path from 'path'
+  import Compiler from '../../tool/Compiler'
+
   export default {
     data(){
       return {
+        progressPercent:0,
         isSocketRuning:false,
         isCompiling:false,
         projectConfig:this.$route.params,
@@ -94,6 +98,15 @@
       },
       onCompileClick(){
         this.isCompiling = true;
+        const cwd = this.projectConfig.workDirectory;
+        const jsonText = fs.readFileSync(path.join(cwd, 'tokenhybrid.config.json'));
+        const json = JSON.parse(jsonText);
+        Compiler.build(json, (percent)=>{
+          this.progressPercent = percent * 100;
+        }).then(()=>{
+          this.progressPercent = 100
+          this.isCompiling = false;
+        });
       }
     }
   }
