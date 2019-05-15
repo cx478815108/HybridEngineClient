@@ -59,12 +59,12 @@
   }
 
   #appcontainer{
+    width: 100%;
+    height: 100%;
     -webkit-user-select: none;
     display: flex;
     flex-direction: row;
     display: flex;
-    height: 100vh;
-    width: 100vw;
     -webkit-app-region: drag;
     overflow: hidden;
   }
@@ -78,7 +78,7 @@
   }
 
   #menuContainer{
-    width: 180px;
+    width: 200px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -90,8 +90,7 @@
   }
 
   #controllerContent{
-    width: 100%;
-    height: 100%;
+    flex: 1;
     background-color: white;
     display: flex;
     overflow:scroll;

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="myapp">
     <router-view></router-view>
   </div>
 </template>
@@ -13,7 +13,7 @@
 
 <style scoped>
   /* CSS */
-  #app {
+  #myapp {
     height: 100vh;
     width: 100vw;
     position: relative;
