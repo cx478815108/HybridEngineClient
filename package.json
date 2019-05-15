@@ -52,10 +52,11 @@
   },
   "dependencies": {
     "fs-extra": "^7.0.1",
-    "hybridcompiler": "^1.0.0",
+    "hybridcompiler": "^1.0.1",
     "iview": "^3.4.1",
     "lowdb": "^1.0.0",
     "monaco-editor": "^0.17.0",
+    "monaco-editor-webpack-plugin": "^1.7.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",

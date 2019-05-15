@@ -40,24 +40,49 @@
     </div>
 
     <div id = "workBody">
+      <div id = "splitArea">
+        <Split id = "split" v-model="splitRatio" mode="vertical" @on-moving = "onSplitMoving()">
+            <CodeEditor slot="top" id = "codeEditor" ref = "monacoEditor"></CodeEditor>
+            <div slot="bottom" id = "appLogContainer" >
+              <div id = "logtoolbar" >
+                <div class = "logtoolbarItem" @click = "onRunClick()"><Icon type="ios-play" size = "22"/></div>
+                <div class = "logtoolbarItem" @click = "onTrashClick()"><Icon type="ios-trash" size = "22"/></div>
+              </div>
+              <textarea id = "appLog" readonly="readonly" v-model = "appLog" placeholder="日志区"></textarea>  
+            </div>
+        </Split>
+      </div>
     </div>
   </div>
   
 </template>
 
 <script>
-  import MobileDebugger from '../../../debug/MobileDebugger'
   import fs from 'fs'
   import path from 'path'
   import hybridcompiler from 'hybridcompiler'
   import { shell }  from 'electron'
+  import MobileDebugger from '../../../debug/MobileDebugger'
+  import CodeEditor from './CodeEditor'
+  import '../css/ProjectEdit.css'
 
   export default {
+    components:{
+        'CodeEditor' : CodeEditor,
+    },
+    mounted(){
+      this.updateFrame();
+      window.addEventListener('resize', ()=>{
+        this.updateFrame();
+      })
+    },
     data(){
       return {
+        splitRatio:0.2,
         progressPercent:0,
         isSocketRuning:false,
         isCompiling:false,
+        appLog:'12334',
         projectConfig:this.$route.params,
         columns:[
           {title: '信息', key: 'title',width:110},
@@ -70,6 +95,16 @@
       }
     },
     methods:{
+      updateFrame(){
+        const split = document.getElementById('split');
+        const codeEditor = document.getElementById('codeEditor');
+        const appLogContainer = document.getElementById('appLogContainer');
+        codeEditor.style.height = `${(split.clientHeight * this.splitRatio)}px`;
+        appLogContainer.style.height = `${(split.clientHeight * (1- this.splitRatio)) - 4}px`;
+      },
+      onSplitMoving(){
+        this.updateFrame();
+      },
       openFinder(){
         const cwd = this.projectConfig.workDirectory;
         const result = shell.showItemInFolder(cwd);
@@ -131,6 +166,13 @@
       },
       onRefreshClick(){
 
+      },
+      onRunClick(){
+        const codes = this.$refs.monacoEditor.getCode();
+        console.log("代码是：", codes);
+      },
+      onTrashClick(){
+
       }
     }
   }
@@ -142,97 +184,4 @@
     margin: 0;
     padding: 0;
   }
-
-  .navigationBar{
-      width: 100%;
-      height: 44px;
-      background-color: rgb(250,250,250);
-      display: flex;
-      flex-direction: row;
-      position: relative;
-  }
-
-  .navItem{
-      width: auto;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-content: center;
-      z-index: 1000;
-  }
-
-  #navTitle {
-      left:0; right:0; top:0; bottom:0;
-      position: absolute;
-      font-size: 18px;
-      line-height: 44px;
-      text-align: center;
-  }
-
-  #projectEdit {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  #head {
-    width: calc(100% - 16px);
-    margin: 8px 8px;
-    height: auto;
-    -webkit-user-select:text;
-  }
-
-  #toolBar{
-    width: calc(100% - 16px);
-    margin: 8px 8px;
-    height: auto;
-    display: flex;
-    flex-direction: row;
-    border: 1px solid rgb(240,240,240);
-  }
-
-  .barItem{
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-  }
-
-  .barItemButton{
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .vsep{
-    width: 1px;
-    height: 100%;
-    background-color: rgb(240,240,240);
-  }
-
-  #workDirectoryInfo{
-    height: auto;
-    -webkit-user-select:text;
-    cursor:text;
-    width: calc(100% - 16px);
-    margin: 8px 8px;
-  }
-
-  #workBody{
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-  }
-
-  #leftSection{
-    margin: 8px 8px;
-    width: 34%;
-    height: auto;
-  }
-
-  .demo-spin-container{
-    display: inline-block;
-    width: 100%;
-    height: auto;
-    position: relative;
-    }
 </style>

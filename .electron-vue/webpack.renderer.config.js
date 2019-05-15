@@ -11,6 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 /**
  * List of node_modules to include in webpack bundle
@@ -101,6 +102,10 @@ let rendererConfig = {
     __filename: process.env.NODE_ENV !== 'production'
   },
   plugins: [
+    new MonacoWebpackPlugin({
+      languages:["javascript","css","html","json"],
+      features:["coreCommands","find"]
+    }),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({

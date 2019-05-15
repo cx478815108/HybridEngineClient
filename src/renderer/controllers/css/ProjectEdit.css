@@ -1,0 +1,145 @@
+.navigationBar{
+    width: 100%;
+    height: 44px;
+    background-color: rgb(250,250,250);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    -webkit-app-region: drag;
+}
+
+.navItem{
+    width: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    z-index: 1000;
+}
+
+#navTitle {
+    left:0; right:0; top:0; bottom:0;
+    position: absolute;
+    font-size: 18px;
+    line-height: 44px;
+    text-align: center;
+}
+
+#projectEdit {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#head {
+  width: calc(100% - 16px);
+  margin: 8px 8px;
+  height: auto;
+  -webkit-user-select:text;
+}
+
+#toolBar{
+  width: calc(100% - 16px);
+  margin: 8px 8px;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid rgb(240,240,240);
+}
+
+.barItem{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.barItemButton{
+  width: 100%;
+  font-size: 14px;
+}
+
+.vsep{
+  width: 1px;
+  height: 100%;
+  background-color: rgb(240,240,240);
+}
+
+#workDirectoryInfo{
+  height: auto;
+  -webkit-user-select:text;
+  cursor:text;
+  width: calc(100% - 16px);
+  margin: 8px 8px;
+}
+
+#workBody{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+#splitArea {
+  margin: 0px 10px 6px 10px;
+  flex: 1;
+  -webkit-app-region: no-drag;
+  border: 1px solid rgb(209, 209, 209);
+  overflow: hidden;
+}
+
+#leftSection{
+  margin: 4px 8px;
+  width: 34%;
+  height: auto;
+}
+
+.demo-spin-container{
+  display: inline-block;
+  width: 100%;
+  height: auto;
+  position: relative;
+}
+
+#appLogContainer{
+  height: 100%;
+  width: 100%;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+#appLog{
+  flex:1;
+  margin: 2px;
+  outline:none;
+  resize: none;
+  border-color:transparent;
+  overflow-y:hidden;
+  overflow-x:hidden;
+}
+
+#logtoolbar {
+  height: 40px;
+  width: 100%;
+  border-bottom: 1px solid gainsboro;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.logtoolbarItem {
+  height: 100%;
+  width: 46px;
+  margin-left: 4px;
+  border-right: 1px solid gainsboro;
+  text-align: center;
+  line-height: 40px;
+}
+
+/* .logtoolbarItem:nth-child(1){
+  margin-left: 10px;
+} */
+
+.logtoolbarItem:hover{
+  color: #2d8cf0;
+}
