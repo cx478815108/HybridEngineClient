@@ -65,7 +65,6 @@
     display: flex;
     flex-direction: row;
     display: flex;
-    -webkit-app-region: drag;
     overflow: hidden;
   }
 
@@ -82,6 +81,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    -webkit-app-region: drag;
   }
 
   #menuWrapper{

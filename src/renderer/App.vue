@@ -17,6 +17,5 @@
     height: 100vh;
     width: 100vw;
     position: relative;
-    -webkit-app-region:drag;
   }
 </style>

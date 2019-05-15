@@ -126,6 +126,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      -webkit-app-region: drag;
   }
 
   .menuItem{
