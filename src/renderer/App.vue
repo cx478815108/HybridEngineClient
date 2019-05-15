@@ -6,14 +6,17 @@
 
 <script>
   export default {
-    name: 'engineclient'
+    name: 'engineclient',
   }
+
 </script>
 
-<style>
+<style scoped>
   /* CSS */
   #app {
     height: 100vh;
     width: 100vw;
+    position: relative;
+    -webkit-app-region:drag;
   }
 </style>

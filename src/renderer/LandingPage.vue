@@ -78,7 +78,7 @@
   }
 
   #menuContainer{
-    width: 160px;
+    width: 180px;
     height: 100%;
     display: flex;
     flex-direction: column;
