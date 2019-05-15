@@ -1,5 +1,6 @@
 export default {
     updateExistedProjects : 'updateExistedProjects',
-    hiddenForms: 'hideForms'
+    hiddenForms: 'hideForms',
+    socketClosed: 'socketClosed'
 }
 

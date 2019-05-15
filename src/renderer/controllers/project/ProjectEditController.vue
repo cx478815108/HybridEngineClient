@@ -13,9 +13,10 @@
         <Table border  :show-header = "false" size = "small" :columns="columns" :data="rows">
           <template slot="action" slot-scope="{ row, index }">
             <Button v-if = 'index==0' type="success" 
-            size="small" style="margin-right: 5px" >打开目录</Button>
+            size="small" style="margin-right: 5px" @click = "openFinder()">打开目录</Button>
             <Button v-if = 'index==1 && !isSocketRuning' type="success" 
             size="small" style="margin-right: 5px" @click = "startServer()">启动服务</Button>
+            <div class="demo-spin-container" v-if = 'index==1 && isSocketRuning' type="text"><Spin fix v-if = 'index==1 && isSocketRuning'></Spin></div>
           </template>
         </Table>
         <Progress v-if = "isCompiling" :percent="progressPercent" :stroke-width="5" />
@@ -32,7 +33,8 @@
           <div class = "vsep"></div>
         </div>
         <div class = "barItem">
-          <Button class = "barItemButton" type="text"><Icon size = '20' style = 'margin-right:4px' type="ios-refresh" />刷新</Button>
+          <Button class = "barItemButton" type="text" @click = "onRefreshClick()">
+            <Icon size = '20' style = 'margin-right:4px' type="ios-refresh" />刷新</Button>
         </div>
       </div>
     </div>
@@ -47,7 +49,8 @@
   import MobileDebugger from '../../../debug/MobileDebugger'
   import fs from 'fs'
   import path from 'path'
-  import Compiler from '../../tool/Compiler'
+  import hybridcompiler from 'hybridcompiler'
+  import { shell }  from 'electron'
 
   export default {
     data(){
@@ -67,13 +70,19 @@
       }
     },
     methods:{
+      openFinder(){
+        const cwd = this.projectConfig.workDirectory;
+        const result = shell.showItemInFolder(cwd);
+          if(!result){
+            this.$Message.error({content:"打开失败！"});
+          }
+      },
       startServer(){
         const self = this;
         MobileDebugger.startServer({
           onStart(ipAddress){
             self.isSocketRuning = true;
             self.rows[1].info = ipAddress;
-            self.$Message.success({content:"调试服务已启动"});
           },
           onConnected(){
             self.rows[2].info = '已连接';
@@ -95,18 +104,33 @@
       },
       onBackItemClick(){
         this.$router.push({name:'manage'});
+        MobileDebugger.closeServer();
+        if(this.isSocketRuning){
+          this.$Notice.info({
+            title:'提示',
+            desc:"调试服务已关闭",
+            top: 10,
+            duration: 2});
+          this.isSocketRuning = false;
+        }
       },
       onCompileClick(){
         this.isCompiling = true;
         const cwd = this.projectConfig.workDirectory;
         const jsonText = fs.readFileSync(path.join(cwd, 'tokenhybrid.config.json'));
         const json = JSON.parse(jsonText);
-        Compiler.build(json, (percent)=>{
+        hybridcompiler.build(json, (percent)=>{
           this.progressPercent = percent * 100;
         }).then(()=>{
           this.progressPercent = 100
           this.isCompiling = false;
+          this.$Message.success({content:"编译成功"});
+        }).catch((error)=>{
+          this.$Message.error({content:"编译失败"});
         });
+      },
+      onRefreshClick(){
+
       }
     }
   }
@@ -204,4 +228,11 @@
     width: 34%;
     height: auto;
   }
+
+  .demo-spin-container{
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    }
 </style>
