@@ -76,6 +76,10 @@
         this.updateFrame();
       })
     },
+    destroyed(){
+      // 关闭服务
+      MobileDebugger.closeServer();
+    },
     data(){
       return {
         iPhoneConnected:false,
@@ -89,13 +93,14 @@
         columns:[
           {title: '信息', key: 'title',width:110},
           {title: '详情', key: 'info'},
-          {title: '操作', slot: 'action',width:100}],
+          {title: '操作', slot: 'action',width:100}
+        ],
         rows:[
           {title:'当前项目路径', info: this.$route.params.workDirectory, height: 30},
           {title:'本机IP', info: '服务未启动'},
           {title:'iPhone 状态', info: '未连接'},
           {title:'自动模式', info: '工程文件变化后会自动编译、传输、刷新App'}
-          ],
+        ],
       }
     },
     methods:{
@@ -147,14 +152,7 @@
       onBackItemClick(){
         this.$router.push({name:'manage'});
         MobileDebugger.closeServer();
-        if(this.isSocketRuning){
-          this.$Notice.info({
-            title:'提示',
-            desc:"调试服务已关闭",
-            top: 10,
-            duration: 2});
-          this.isSocketRuning = false;
-        }
+        this.isSocketRuning = false;
       },
       onSwitchClick(){
 
