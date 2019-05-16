@@ -101,6 +101,11 @@ class MobileDebugger{
 
     startServer(config){
         this.config = config || {};
+
+        if(!this.getIPAdress() && typeof this.config.onStart === 'function'){
+            return this.config.onError('未发现IP，可能未连接到WiFi');
+        }
+
         const self = this;
         const server = net.createServer(function(socket){
             self.mobileSocket = socket;

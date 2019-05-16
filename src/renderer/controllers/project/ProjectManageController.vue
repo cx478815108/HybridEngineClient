@@ -3,7 +3,7 @@
       <Modal v-model="queryDeleteExist" title="请注意" @on-ok="onDeleteAllRecordsClick()">
             <p>确定清空保存的所有工程记录吗？</p>
             <p>这不会删除磁盘上的文件</p>
-        </Modal>
+      </Modal>
       <div id = "rootContainer">
         <Drawer title="新建工程" v-model="showCreateForm" :width="formWidth" :styles="formStyles">
           <CreateForm></CreateForm>

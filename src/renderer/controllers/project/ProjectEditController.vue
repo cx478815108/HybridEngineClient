@@ -10,13 +10,14 @@
     </nav>
     <div>
       <div id = "head">
-        <Table border  :show-header = "false" size = "small" :columns="columns" :data="rows">
+        <Table border :show-header = "false" size = "small" :columns="columns" :data="rows">
           <template slot="action" slot-scope="{ row, index }">
             <Button v-if = 'index==0' type="success" 
             size="small" style="margin-right: 5px" @click = "openFinder()">打开目录</Button>
             <Button v-if = 'index==1 && !isSocketRuning' type="success" 
             size="small" style="margin-right: 5px" @click = "startServer()">启动服务</Button>
             <div class="demo-spin-container" v-if = 'index==1 && isSocketRuning' type="text"><Spin fix v-if = 'index==1 && isSocketRuning'></Spin></div>
+            <i-switch v-if = 'index==3 && isSocketRuning && iPhoneConnected'  v-model="watching" @on-change="onSwitchClick()"></i-switch>
           </template>
         </Table>
         <Progress v-if = "isCompiling" :percent="progressPercent" :stroke-width="5" />
@@ -54,7 +55,6 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -78,7 +78,9 @@
     },
     data(){
       return {
-        splitRatio:0.2,
+        iPhoneConnected:false,
+        watching:false,
+        splitRatio:0.4,
         progressPercent:0,
         isSocketRuning:false,
         isCompiling:false,
@@ -89,9 +91,11 @@
           {title: '详情', key: 'info'},
           {title: '操作', slot: 'action',width:100}],
         rows:[
-          {title:'当前项目路径', info: this.$route.params.workDirectory},
+          {title:'当前项目路径', info: this.$route.params.workDirectory, height: 30},
           {title:'本机IP', info: '服务未启动'},
-          {title:'iPhone 状态', info: '未连接'}],
+          {title:'iPhone 状态', info: '未连接'},
+          {title:'自动模式', info: '工程文件变化后会自动编译、传输、刷新App'}
+          ],
       }
     },
     methods:{
@@ -120,17 +124,20 @@
             self.rows[1].info = ipAddress;
           },
           onConnected(){
+            this.iPhoneConnected = true;
             self.rows[2].info = '已连接';
             self.$Message.success({content:"iPhone客户端已连接"});
           },
           onClose(){
+            this.iPhoneConnected = false;
             self.rows[2].info = '未连接';
             self.$Message.error({content:"和iPhone的调试已经断开"});
           },
           onError(error){
+            this.iPhoneConnected = false;
             self.isSocketRuning = false;
             self.rows[2].info = '未连接';
-            self.$Message.error({content:"链接发生错误"});
+            self.$Message.error({content:error});
           }
         });
       },
@@ -148,6 +155,9 @@
             duration: 2});
           this.isSocketRuning = false;
         }
+      },
+      onSwitchClick(){
+
       },
       onCompileClick(){
         this.isCompiling = true;
