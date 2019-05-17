@@ -15,12 +15,11 @@
             <Button v-if = 'index==0' type="success" 
             size="small" style="margin-right: 5px" @click = "openFinder()">打开目录</Button>
             <Button v-if = 'index==1 && !isSocketRuning' type="success" 
-            size="small" style="margin-right: 5px" @click = "startServer()">启动服务</Button>
+            size="small" style="margin-right: 5px" @click = "onStartServerClick()">启动服务</Button>
             <div class="demo-spin-container" v-if = 'index==1 && isSocketRuning' type="text"><Spin fix v-if = 'index==1 && isSocketRuning'></Spin></div>
-            <i-switch v-if = 'index==3 && isSocketRuning && iPhoneConnected'  v-model="watching" @on-change="onSwitchClick()"></i-switch>
+            <i-switch v-if = 'index==3 && isSocketRuning && iPhoneConnected'  v-model="shouldWatching" @on-change="onSwitchClick()"></i-switch>
           </template>
         </Table>
-        <Progress v-if = "isCompiling" :percent="progressPercent" :stroke-width="5" />
       </div>
       <div id = "toolBar">
         <div class = "barItem">
@@ -42,12 +41,12 @@
 
     <div id = "workBody">
       <div id = "splitArea">
-        <Split id = "split" v-model="splitRatio" mode="vertical" @on-moving = "onSplitMoving()">
+        <Split id = "split" v-model="splitRatio" mode="vertical" @on-moving = "updateFrame()">
             <CodeEditor slot="top" id = "codeEditor" ref = "monacoEditor"></CodeEditor>
             <div slot="bottom" id = "appLogContainer" >
               <div id = "logtoolbar" >
                 <div class = "logtoolbarItem" @click = "onRunClick()"><Icon type="ios-play" size = "22"/></div>
-                <div class = "logtoolbarItem" @click = "onTrashClick()"><Icon type="ios-trash" size = "22"/></div>
+                <div class = "logtoolbarItem" @click = "appLog = ''"><Icon type="ios-trash" size = "22"/></div>
               </div>
               <textarea id = "appLog" readonly="readonly" v-model = "appLog" placeholder="日志区"></textarea>  
             </div>
@@ -60,10 +59,10 @@
 <script>
   import fs from 'fs'
   import path from 'path'
-  import hybridcompiler from 'hybridcompiler'
   import { shell }  from 'electron'
   import MobileDebugger from '../../../debug/MobileDebugger'
   import CodeEditor from './CodeEditor'
+  import Workman from '../js/Workman'
   import '../css/ProjectEdit.css'
 
   export default {
@@ -74,33 +73,35 @@
       this.updateFrame();
       window.addEventListener('resize', ()=>{
         this.updateFrame();
-      })
+      });
+      this.workman = new Workman(this.projectConfig);
+      this.onStartServerClick();
     },
     destroyed(){
       // 关闭服务
       MobileDebugger.closeServer();
+      this.workman.destroy();
     },
     data(){
       return {
-        iPhoneConnected:false,
-        watching:false,
-        splitRatio:0.4,
-        progressPercent:0,
-        isSocketRuning:false,
-        isCompiling:false,
-        appLog:'12334',
-        projectConfig:this.$route.params,
+        iPhoneConnected: false,
+        shouldWatching : false,
+        splitRatio     : 0.36,
+        isSocketRuning : false,
+        appLog         : '',
+        projectConfig  : this.$route.params,
         columns:[
           {title: '信息', key: 'title',width:110},
           {title: '详情', key: 'info'},
           {title: '操作', slot: 'action',width:100}
         ],
         rows:[
-          {title:'当前项目路径', info: this.$route.params.workDirectory, height: 30},
+          {title:'当前项目路径', info: this.$route.params.workDirectory},
           {title:'本机IP', info: '服务未启动'},
           {title:'iPhone 状态', info: '未连接'},
           {title:'自动模式', info: '工程文件变化后会自动编译、传输、刷新App'}
         ],
+        workman:null
       }
     },
     methods:{
@@ -111,17 +112,14 @@
         codeEditor.style.height = `${(split.clientHeight * this.splitRatio)}px`;
         appLogContainer.style.height = `${(split.clientHeight * (1- this.splitRatio)) - 4}px`;
       },
-      onSplitMoving(){
-        this.updateFrame();
-      },
       openFinder(){
         const cwd = this.projectConfig.workDirectory;
         const result = shell.showItemInFolder(cwd);
-          if(!result){
-            this.$Message.error({content:"打开失败！"});
-          }
+        if(!result){
+          this.$Message.error({content:"打开失败！"});
+        }
       },
-      startServer(){
+      onStartServerClick(){
         const self = this;
         MobileDebugger.startServer({
           onStart(ipAddress){
@@ -129,58 +127,76 @@
             self.rows[1].info = ipAddress;
           },
           onConnected(){
-            this.iPhoneConnected = true;
+            self.iPhoneConnected = true;
             self.rows[2].info = '已连接';
             self.$Message.success({content:"iPhone客户端已连接"});
           },
           onClose(){
-            this.iPhoneConnected = false;
+            self.iPhoneConnected = false;
             self.rows[2].info = '未连接';
             self.$Message.error({content:"和iPhone的调试已经断开"});
           },
           onError(error){
-            this.iPhoneConnected = false;
+            self.iPhoneConnected = false;
             self.isSocketRuning = false;
             self.rows[2].info = '未连接';
             self.$Message.error({content:error});
+            self.appLog = error;
           }
         });
       },
       onTransportClick(){
-        MobileDebugger.transportMessage();
+        if(!this.iPhoneConnected) {
+          return this.$Message.info({content:'iPhone未连接'});
+        }
+        this.workman.transportFile()
+        .then(()=>{
+          this.$Message.info({content:'传输完毕'});
+        }).catch((error)=>{
+          this.$Message.error({content:error});
+          this.appLog = error;
+        });
       },
       onBackItemClick(){
+        this.isSocketRuning = false;
         this.$router.push({name:'manage'});
         MobileDebugger.closeServer();
-        this.isSocketRuning = false;
       },
       onSwitchClick(){
-
+        if(this.shouldWatching){
+          this.workman.watchProject()
+          .then(()=>{
+            this.appLog = '文件监测已启动';
+          }).catch((error)=>{
+            this.appLog = error;
+          });
+          return ;
+        }
+        if(!this.workman) return ;
+        this.workman.stopWatch();
+        this.appLog  = '文件监测已停止';
       },
       onCompileClick(){
-        this.isCompiling = true;
-        const cwd = this.projectConfig.workDirectory;
-        const jsonText = fs.readFileSync(path.join(cwd, 'tokenhybrid.config.json'));
-        const json = JSON.parse(jsonText);
-        hybridcompiler.build(json, (percent)=>{
-          this.progressPercent = percent * 100;
-        }).then(()=>{
-          this.progressPercent = 100
-          this.isCompiling = false;
+        this.appLog    = '开始编译...\n';
+        const process  = (item) =>{
+          this.appLog  = this.appLog + item.info + '\n';
+        };
+
+        this.workman.compileProject(process)
+        .then(()=>{
           this.$Message.success({content:"编译成功"});
-        }).catch((error)=>{
+        })
+        .catch((error)=>{
           this.$Message.error({content:"编译失败"});
+          this.appLog = error;
         });
       },
       onRefreshClick(){
-
+        this.workman.sendRefreshCommond();
       },
       onRunClick(){
-        const codes = this.$refs.monacoEditor.getCode();
-        console.log("代码是：", codes);
-      },
-      onTrashClick(){
-
+        const code = this.$refs.monacoEditor.getCode();
+        this.workman.sendRunCodeCommand(code);
       }
     }
   }

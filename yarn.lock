@@ -4349,10 +4349,10 @@ humanize-plus@^1.8.1:
   resolved "https://registry.npm.taobao.org/humanize-plus/download/humanize-plus-1.8.2.tgz#a65b34459ad6367adbb3707a82a3c9f916167030"
   integrity sha1-pls0RZrWNnrbs3B6gqPJ+RYWcDA=
 
-hybridcompiler@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/hybridcompiler/-/hybridcompiler-1.0.1.tgz#447c03d00ebfa17856909d0a5558380ae0df55c8"
-  integrity sha512-leJSyXIvQ1tsNnYafBSURMRXN46Dp95cv6hgmJiYel3UZVNEI7dZ+RJ35f8wXSR4bdxzQqWBQk4ZDl4z7aGi8g==
+hybridcompiler@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/hybridcompiler/-/hybridcompiler-1.0.3.tgz#8394fd33653d0edd0c27a7fd43ea79825fe5dafc"
+  integrity sha512-0ooLBvEQ3v4zMYPMJp0EH2rG0WzodOfQz4Z7I9+qNoHfLzhgsjnOYrc7ME0YPv7eV4scx6KnUazJMNotGGCPwA==
   dependencies:
     blueimp-md5 "^2.10.0"
     css-select "^2.0.2"

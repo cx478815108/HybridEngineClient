@@ -118,8 +118,6 @@
   outline:none;
   resize: none;
   border-color:transparent;
-  overflow-y:hidden;
-  overflow-x:hidden;
 }
 
 #logtoolbar {

@@ -155,55 +155,40 @@ class MobileDebugger{
         }
     }
 
-    transportMessage(){
+    transportMessage(title, jsonData){
         if(!this.mobileSocket) return ;
-        // const msg = SocketMessage.makeNormalTypeMessage('这是标题', {
-        //     code: 123,
-        //     parameters:{
-        //         name:'cx'
-        //     }
-        // });
-        // this.mobileSocket.write(msg);
-        const path = '/Users/feelings/FrontEnd/Token小程序/helloworld/production/production.zip';
-        this.transportFile(path, (msg)=>{
-            console.log(msg);
-        });
+        const msg = SocketMessage.makeNormalTypeMessage(title, jsonData);
+        this.mobileSocket.write(msg);
     }
 
-    transportFile(transportPath, process){
-        if(!this.mobileSocket) return ;
-
-        if(process){
-            process("开始传输文件\n" + transportPath);
-        }
-
-        const rs = fs.createReadStream(transportPath, {highWaterMark: 65528});
+    transportFile(transportPath){
         const self = this;
-
-        rs.on('data', function (chunk) {
-            const message = SocketMessage.makeBionaryTypeMessage('data', chunk);
-            self.mobileSocket.write(message);
-        });
-    
-        rs.on('end', function (chunk) {
-            self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
-                code:1,
-                msg:"传输完成"
-            }));
-            if(process){
-                process("传送完毕\n");
+        return new Promise((resolve, reject)=>{
+            if(!this.mobileSocket) {
+                return reject("iPhone 未连接");
             }
-        });
-    
-        // 监听错误
-        rs.on('error', function (err) {
-            self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
-                code:0,
-                msg:"文件加载错误"
-            }));
-            if(process){
-                process("传送发生错误");
-            }
+            const rs = fs.createReadStream(transportPath, {highWaterMark: 65528});
+            rs.on('data', function (chunk) {
+                const message = SocketMessage.makeBionaryTypeMessage('data', chunk);
+                self.mobileSocket.write(message);
+            });
+        
+            rs.on('end', function (chunk) {
+                self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
+                    code:1,
+                    msg:"传输完成"
+                }));
+                resolve();
+            });
+        
+            // 监听错误
+            rs.on('error', function (err) {
+                self.mobileSocket.write(SocketMessage.makeNormalTypeMessage('传输结果',{
+                    code:0,
+                    msg:"文件加载错误"
+                }));
+                reject(err);
+            });
         });
     }
 

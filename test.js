@@ -1,77 +1,24 @@
-const chokidar = require('chokidar');
+const testJSON ={
+  "bundle.identifier": "test",
+  "displayName": "计算器",
+  "workDirectory": "/Users/feelings/FrontEnd/Token小程序/helloworld",
+  "entryJS": "index.js",
+  "entryHTML": "index.html",
+  "entryCSS": "index.css"
+}
 
-// One-liner for current directory, ignores .dotfiles
-const watcher = chokidar.watch('/Users/feelings/FrontEnd/Token小程序/helloworld/mainPage', {ignored: /(^|[\/\\])\../}).on('all', (event, path) => {
-  console.log(event, path);
-});
-    
-watcher.unwatch('/Users/feelings/FrontEnd/Token小程序/helloworld/mainPage/config.json');
-
-// Example of a more typical implementation structure:
-
-// Initialize watcher.
-const watcher = chokidar.watch('file, dir, glob, or array', {
-    ignored: /(^|[\/\\])\../,
-    persistent: true
-  });
-  
-  // Something to use when events are received.
-  const log = console.log.bind(console);
-  // Add event listeners.
-  watcher
-    .on('add', path => log(`File ${path} has been added`))
-    .on('change', path => log(`File ${path} has been changed`))
-    .on('unlink', path => log(`File ${path} has been removed`));
-  
-  // More possible events.
-  watcher
-    .on('addDir', path => log(`Directory ${path} has been added`))
-    .on('unlinkDir', path => log(`Directory ${path} has been removed`))
-    .on('error', error => log(`Watcher error: ${error}`))
-    .on('ready', () => log('Initial scan complete. Ready for changes'))
-    .on('raw', (event, path, details) => {
-      log('Raw event info:', event, path, details);
-    });
-  
-  // 'add', 'addDir' and 'change' events also receive stat() results as second
-  // argument when available: http://nodejs.org/api/fs.html#fs_class_fs_stats
-  watcher.on('change', (path, stats) => {
-    if (stats) console.log(`File ${path} changed size to ${stats.size}`);
-  });
-  
-  // Watch new files.
-  watcher.add('new-file');
-  watcher.add(['new-file-2', 'new-file-3', '**/other-file*']);
-  
-  // Get list of actual paths being watched on the filesystem
-  var watchedPaths = watcher.getWatched();
-  
-  // Un-watch some files.
-  watcher.unwatch('new-file*');
-  
-  // Stop watching.
-  watcher.close();
-  
-  // Full list of options. See below for descriptions. (do not use this example)
-  chokidar.watch('file', {
-    persistent: true,
-  
-    ignored: '*.txt',
-    ignoreInitial: false,
-    followSymlinks: true,
-    cwd: '.',
-    disableGlobbing: false,
-  
-    usePolling: true,
-    interval: 100,
-    binaryInterval: 300,
-    alwaysStat: false,
-    depth: 99,
-    awaitWriteFinish: {
-      stabilityThreshold: 2000,
-      pollInterval: 100
-    },
-  
-    ignorePermissionErrors: false,
-    atomic: true // or a custom 'atomicity delay', in milliseconds (default 100)
-  });
+const fs = require('fs');
+const path = require('path');
+const hybrid = require('hybridcompiler');
+const log = (text)=>{
+  console.log(text);
+}
+hybrid.build(testJSON, null, log).then(()=>{
+    const cwd = testJSON.workDirectory;
+    const zipFile = path.join(cwd, 'production', 'production.zip');
+    const result = fs.existsSync(testJSON.workDirectory);
+    console.log("编译完成",result);
+})
+.catch((err)=>{
+    console.log("出错了",err);
+})
