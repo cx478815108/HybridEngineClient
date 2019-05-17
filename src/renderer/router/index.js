@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import LandingPage from '@/LandingPage'
 
 import ProjectRootController from '@/controllers/project/ProjectRootController'
+import DocumentController from '@/controllers/document/DocumentController'
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
           path:'/project',
           name:'project-page',
           component:ProjectRootController
+        },
+        {
+          path:'/document',
+          name:'document-page',
+          component:DocumentController
         }
       ]
     },

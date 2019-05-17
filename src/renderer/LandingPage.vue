@@ -11,11 +11,11 @@
               <Icon type="md-document" />
               工程管理
           </MenuItem>
-          <MenuItem name="2" to = '/codeSnapshotController'>
+          <MenuItem name="2" to = '/codeSnapshot'>
               <Icon type="ios-code" />
               代码片段
           </MenuItem>
-          <MenuItem name="3" to = '/documentController'>
+          <MenuItem name="3" to = '/document'>
               <Icon type="ios-book-outline"/>
               开发文档
           </MenuItem>
