@@ -105,6 +105,11 @@
       }
     },
     methods:{
+      setAppLog(log){
+        const date = new Date();
+        const logInfo = (`[${date.getDay()}:${date.getHours()}:${date.getMinutes()}]：${log}`);
+        this.appLog = logInfo;
+      },
       updateFrame(){
         const split = document.getElementById('split');
         const codeEditor = document.getElementById('codeEditor');
@@ -130,6 +135,9 @@
             self.iPhoneConnected = true;
             self.rows[2].info = '已连接';
             self.$Message.success({content:"iPhone客户端已连接"});
+          },
+          onReceiveMessage(msg){
+            self.appLog = msg;
           },
           onClose(){
             self.iPhoneConnected = false;
@@ -164,22 +172,24 @@
       },
       onSwitchClick(){
         if(this.shouldWatching){
-          this.workman.watchProject()
+          this.workman.watchProject(this.setAppLog)
           .then(()=>{
-            this.appLog = '文件监测已启动';
-          }).catch((error)=>{
+            this.setAppLog('文件监测已启动');
+          })
+          .catch((error)=>{
             this.appLog = error;
           });
           return ;
         }
         if(!this.workman) return ;
         this.workman.stopWatch();
-        this.appLog  = '文件监测已停止';
+        this.setAppLog('文件监测已停止');
       },
       onCompileClick(){
-        this.appLog    = '开始编译...\n';
+        let appLog    = '开始编译...\n';
         const process  = (item) =>{
-          this.appLog  = this.appLog + item.info + '\n';
+          const join = appLog + item.info + '\n';
+          this.setAppLog(join);
         };
 
         this.workman.compileProject(process)
@@ -192,9 +202,15 @@
         });
       },
       onRefreshClick(){
+        if(!this.iPhoneConnected) {
+          return this.$Message.info({content:'iPhone未连接'});
+        }
         this.workman.sendRefreshCommond();
       },
       onRunClick(){
+        if(!this.iPhoneConnected) {
+          return this.$Message.info({content:'iPhone未连接'});
+        }
         const code = this.$refs.monacoEditor.getCode();
         this.workman.sendRunCodeCommand(code);
       }

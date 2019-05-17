@@ -96,6 +96,9 @@ class MobileDebugger{
                     this.config.onConnected();
                 }
             }
+            else if(data.log){
+                this.config.onReceiveMessage(data.log);
+            }
         } catch (error) {}
     }
 

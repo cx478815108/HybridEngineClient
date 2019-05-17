@@ -4,6 +4,11 @@ import fs from 'fs';
 import hybridcompiler from "hybridcompiler";
 import MobileDebugger from '../../../debug/MobileDebugger'
 
+const RemoteCode = {
+    refresh:10,
+    runCode:11
+}
+
 export default class Workman{
     constructor(configJSON){
         this.watcher        = null;
@@ -12,16 +17,22 @@ export default class Workman{
         this.cwd            = configJSON.workDirectory;
     }
 
-    watchProject(){
+    watchProject(process){
         const self = this;
         const cwd  = this.cwd;
+        process = process || console.log;
         return new Promise((resolve, reject)=>{
             const mainPage   = path.join(cwd, 'mainPage');
             const otherPages = path.join(cwd, 'otherPages');
             const projJSON   = path.join(cwd, 'tokenhybrid.config.json');
             const ignored    = {ignored: /(^|[\/\\])\../};   
-            const callBack   = ()=>{
+            const callBack   = (event, path)=>{
                 self.automaticWork()
+                .then(()=>{
+                    process(`编译并刷新完毕...`);
+                }).catch((error)=>{
+                    process(error);
+                })
             };       
             self.watcher = chokidar.watch([mainPage, otherPages, projJSON], ignored);
             self.watcher
@@ -77,14 +88,15 @@ export default class Workman{
 
     sendRefreshCommond(){
         MobileDebugger.transportMessage('刷新命令',{
-            code:10,
-            data:this.projectConfig
+            code:RemoteCode.refresh,
+            data:this.configJSON
         });
     }
 
     sendRunCodeCommand(code){
+        if(typeof code !== 'string' || code.length <= 0) return ;
         MobileDebugger.transportMessage('刷新命令',{
-            code:11,
+            code:RemoteCode.runCode,
             data:code
         });
     }
