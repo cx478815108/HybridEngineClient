@@ -50,6 +50,7 @@
                     @dragover = "onDragover($event)" 
                     @click = "onDragAreaClick()">
                         <Icon type="ios-folder-open-outline" size="32" style="margin-top:8px;color: #3399ff" />
+                        <div style = "margin-bottom:6px">{{workDirectoryInfo}}</div>
                 </div>
             </FormItem>
             </Col>
@@ -69,6 +70,7 @@
   const { dialog } = require('electron').remote;
   import AppManager from "../../tool/AppManager";
   import AppTemplate from "../../tool/AppTemplate";
+  import AppEventKeys from '../../tool/AppEventKeys'
 
   export default {
     data(){
@@ -84,7 +86,7 @@
             entryCSS:'index.css'
         },
         queryFileExist:false,
-        workDirectoryInfo:"请选择保存的目录",
+        workDirectoryInfo:"请选择保存的目录-可拖拽目录至此处",
         selectedFolder:false
       }
     },

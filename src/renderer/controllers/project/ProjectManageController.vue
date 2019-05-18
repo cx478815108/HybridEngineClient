@@ -162,7 +162,7 @@
     width: 48%;
     margin-right: 10px;
     margin-bottom: 10px;
-    height: 180px;
+    height: 110px;
     position: relative;
   }
 
@@ -174,5 +174,8 @@
 
   #cardContainer {
       padding: 10px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
   }
 </style>

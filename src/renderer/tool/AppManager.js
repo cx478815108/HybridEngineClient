@@ -1,11 +1,9 @@
 import fs from 'fs-extra'
 import path from 'path'
 import AppDB from './AppDB'
+import Template from './Template'
 
 class AppManager{
-    constructor(){
-        
-    }
 
     appTemplateExist(appTemplate){
         return AppDB.appTemplateExist(appTemplate);
@@ -16,12 +14,17 @@ class AppManager{
        const p = appTemplate;
        const mainPagePath = p.mainPageFolderPath;
        const targetPaths  = [p.entryHTML, p.entryJS, p.entryCSS];
-       const sourceNames  = ['index.html','index.js','index.css'];
-       const templatePath = path.resolve(__dirname, '../assets/template/');
+       
+       const template = new Template();
+       const sources  = [
+           template.getHTMLText(), 
+           template.getJSText(),
+           template.getCSSText()
+        ];
+
        for(let i = 0; i < 3;i++){
            const targetPath = path.join(mainPagePath, targetPaths[i]);
-           const sourcePath = path.join(templatePath, sourceNames[i]);
-           fs.copySync(sourcePath, targetPath);
+           fs.writeFileSync(targetPath, sources[i]);
        }
 
        // 写入tokenhybrid.config.json

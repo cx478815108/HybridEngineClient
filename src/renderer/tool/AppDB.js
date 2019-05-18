@@ -5,12 +5,8 @@ import { remote, app } from 'electron'
 import path from 'path'
  
 const APP = process.type === 'renderer' ? remote.app : app // 获取主进程
-const STORE_PATH = APP.getPath('userData');
-if (process.type !== 'renderer') {
-    if (!fs.pathExistsSync(STORE_PATH)) {
-      fs.mkdirpSync(STORE_PATH)
-    }
-}  
+const STORE_PATH = path.join(APP.getPath('documents'), 'tokenhybrid');
+fs.ensureDirSync(STORE_PATH);
 
 class AppDB{
     constructor(){
