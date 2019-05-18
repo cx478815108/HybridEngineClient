@@ -35,7 +35,7 @@
               isLoading:true,
               webWidth:400,
               webHeight:400,
-              src:'https://cx478815108.github.io/HybridDocument/#/quickstart'
+              src:'https://cx478815108.github.io/HybridDocument/#/'
           }
       }
   }

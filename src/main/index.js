@@ -35,8 +35,6 @@ function createWindow () {
   mainWindow.on('ready-to-show', function (){
     mainWindow.show();
   })
-
-  mainWindow.webContents.openDevTools();
 }
 
 app.on('ready', createWindow)
