@@ -34,7 +34,7 @@ function createWindow () {
 
   mainWindow.on('ready-to-show', function (){
     mainWindow.show();
-    mainWindow.openDevTools();
+    // mainWindow.openDevTools();
   })
 }
 
