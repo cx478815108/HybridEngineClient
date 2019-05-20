@@ -27,6 +27,9 @@ class AppTemplate{
         // modal目录
         this.modalPageRootPath  = path.join(this.workDirectory, 'mainPage', 'modalPages');
 
+        // assests Path 
+        this.assetsPath = path.join(this.workDirectory, 'assets');
+
         this.ensurePath();
     }
 
@@ -61,6 +64,7 @@ class AppTemplate{
         }
 
         const paths = [
+            this.assetsPath,
             this.mainPageFolderPath, 
             this.distFolderPath,
             this.modalPageRootPath,
