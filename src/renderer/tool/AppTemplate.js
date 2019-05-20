@@ -49,9 +49,9 @@ class AppTemplate{
     getMainPageJSON(){
         // 字段必须一一写
         const json = {
-            "title"         : this.mainTitle,
-            "statusBarStyle": 'white',
-            "navBarColor"   : 'rgb(255,255,255)',
+            "title"        : this.mainTitle,
+            "navBar.style" : 'white',
+            "navBar.color" : 'rgb(255,255,255)',
         }
         return json;
     }
