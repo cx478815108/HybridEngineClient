@@ -107,8 +107,13 @@
     methods:{
       setAppLog(log){
         const date = new Date();
-        const logInfo = (`[${date.getDay()}:${date.getHours()}:${date.getMinutes()}]：${log}`);
+        const logInfo = (`[${date.getMinutes()}:${date.getSeconds()}]：${log}`);
         this.appLog = logInfo;
+      },
+      appendAppLog(log){
+        const date = new Date();
+        const logInfo = (`[${date.getMinutes()}:${date.getSeconds()}]：${log}\n`);
+        this.appLog += logInfo;
       },
       updateFrame(){
         const split = document.getElementById('split');
@@ -137,7 +142,7 @@
             self.$Message.success({content:"iPhone客户端已连接"});
           },
           onReceiveMessage(msg){
-            self.appLog = msg;
+            self.appendAppLog(msg);
           },
           onClose(){
             self.iPhoneConnected = false;
@@ -174,7 +179,7 @@
         if(this.shouldWatching){
           this.workman.watchProject(this.setAppLog)
           .then(()=>{
-            this.setAppLog('文件监测已启动');
+            this.appendAppLog('文件监测已启动');
           })
           .catch((error)=>{
             this.appLog = error;
@@ -183,13 +188,13 @@
         }
         if(!this.workman) return ;
         this.workman.stopWatch();
-        this.setAppLog('文件监测已停止');
+        this.appendAppLog('文件监测已停止');
       },
       onCompileClick(){
         let appLog    = '开始编译...\n';
         const process  = (item) =>{
           const join = appLog + item.info + '\n';
-          this.setAppLog(join);
+          this.appendAppLog(join);
         };
 
         this.workman.compileProject(process)
@@ -198,7 +203,7 @@
         })
         .catch((error)=>{
           this.$Message.error({content:"编译失败"});
-          this.appLog = error;
+          this.setAppLog("" + error);
         });
       },
       onRefreshClick(){

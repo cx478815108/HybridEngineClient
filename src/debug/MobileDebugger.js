@@ -67,6 +67,7 @@ class MobileDebugger{
         this.ipAddress       = null;
         this.server          = null;
         this.config          = {};
+        this.cachedBuffer    = Buffer.from('');
     }
 
     getIPAdress(){
@@ -88,22 +89,47 @@ class MobileDebugger{
         return this.ipAddress;
     }
 
+    processRawPackage(buffData){
+        const headLength = 10;
+        this.cachedBuffer = Buffer.concat([this.cachedBuffer, buffData]);
+        while(this.cachedBuffer.length >= 10){
+            // 开始拆包
+            // 单个包的长度buff
+            const headBuff = this.cachedBuffer.slice(0, headLength); 
+            // 单个包的长度
+            const originLength = Number.parseInt(headBuff.toString().replace(/\|/g, ""));
+            // 截取完整的包
+            const packageData = this.cachedBuffer.slice(10, 10 + originLength);
+            this.cachedBuffer = this.cachedBuffer.slice(10 + originLength, this.cachedBuffer.length);
+            this.handleMobileMessage(packageData);
+        }
+    }
+
     handleMobileMessage(buffData){
         try {
             const data = JSON.parse(buffData.toString());
+            console.log(buffData.toString());
             if(data.identify === 'iOS'){
                 if(typeof this.config.onConnected === 'function'){
                     this.config.onConnected();
                 }
             }
             else if(data.log){
-                this.config.onReceiveMessage(data.log);
+                if(typeof this.config.onReceiveMessage === 'function'){
+                    this.config.onReceiveMessage(data.log);
+                }
             }
-        } catch (error) {}
+        } catch (error) {
+            this.cachedBuffer = Buffer.from('');
+            if(typeof this.config.onReceiveMessage === 'function'){
+                this.config.onReceiveMessage("" + error);
+            }
+        }
     }
 
     startServer(config){
         this.config = config || {};
+        console.log(this.getIPAdress());
 
         if(!this.getIPAdress() && typeof this.config.onStart === 'function'){
             return this.config.onError('未发现IP，可能未连接到WiFi');
@@ -115,7 +141,7 @@ class MobileDebugger{
       
             //接收到数据
             socket.on('data',function(data){
-                self.handleMobileMessage(data);
+                self.processRawPackage(data);
             });
         
             //数据错误事件
