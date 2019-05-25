@@ -1,8 +1,8 @@
 {
-  "name": "engineclient",
-  "version": "1.0.0",
+  "name": "hybridclient",
+  "version": "1.0.1",
   "author": "陈雄 <478815108@qq.com>",
-  "description": "An electron-vue project",
+  "description": "TokenHybrid 打包调试工具",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
