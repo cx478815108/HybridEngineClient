@@ -18,7 +18,7 @@ export default class Template{
 
 .title {
     width: 100%;
-    height: 60px;
+    height: auto;
     margin-top: 40px;
     font-size: 30px;
     text-align: center;

@@ -119,7 +119,9 @@
         const split = document.getElementById('split');
         const codeEditor = document.getElementById('codeEditor');
         const appLogContainer = document.getElementById('appLogContainer');
-        codeEditor.style.height = `${(split.clientHeight * this.splitRatio)}px`;
+        if(codeEditor &&codeEditor.style){
+          codeEditor.style.height = `${(split.clientHeight * this.splitRatio)}px`;
+        }
         appLogContainer.style.height = `${(split.clientHeight * (1- this.splitRatio)) - 4}px`;
       },
       openFinder(){
@@ -191,10 +193,9 @@
         this.appendAppLog('文件监测已停止');
       },
       onCompileClick(){
-        let appLog    = '开始编译...\n';
+        this.setAppLog('开始编译...\n');
         const process  = (item) =>{
-          const join = appLog + item.info + '\n';
-          this.appendAppLog(join);
+          this.appendAppLog(item.info);
         };
 
         this.workman.compileProject(process)
