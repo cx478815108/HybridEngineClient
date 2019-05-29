@@ -4,6 +4,7 @@ import LandingPage from '@/LandingPage'
 
 import ProjectRootController from '@/controllers/project/ProjectRootController'
 import DocumentController from '@/controllers/document/DocumentController'
+import CodeSegmentController from '@/controllers/codesegment/CodeSegmentController'
 
 Vue.use(Router)
 
@@ -23,6 +24,11 @@ export default new Router({
           path:'/document',
           name:'document-page',
           component:DocumentController
+        },
+        {
+          path:'/codesegment',
+          name:'codesegment-page',
+          component:CodeSegmentController
         }
       ]
     },

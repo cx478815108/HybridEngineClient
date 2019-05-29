@@ -57,6 +57,8 @@
   #webView {
       width: 100%;
       height: 100%;
+      -webkit-user-select:text;
+      -webkit-app-region: no-drag;
   }
 
   .demo-spin-icon-load{

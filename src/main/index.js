@@ -1,5 +1,6 @@
-import { app, BrowserWindow } from 'electron'
-// const MobileDebugger = require('../hybridcompiler/debug/MobileDebugger')
+import { app, BrowserWindow, Menu } from 'electron';
+import { constant } from 'change-case';
+import MenuConfig from './Menu';
 
 /**
  * Set `__static` path to static files in production
@@ -36,6 +37,10 @@ function createWindow () {
     mainWindow.show();
     // mainWindow.openDevTools();
   })
+
+  if (process.platform !== 'darwin') {
+    Menu.setApplicationMenu(Menu.buildFromTemplate(MenuConfig.items));
+  }
 }
 
 app.on('ready', createWindow)

@@ -2,7 +2,7 @@
   <div id = "appcontainer">
     <div id = "menuContainer">
       <div id = "title">TokenHybrid</div>
-      <div id = "version">版本号v1.0.1</div>
+      <div id = "version">版本号v1.0.2</div>
       <div id = "menuWrapper">
         <Menu width = '100%' active-name="1" 
         @on-select= "didPressedMenuItem($event)" 
@@ -11,7 +11,7 @@
               <Icon type="md-document" />
               工程管理
           </MenuItem>
-          <MenuItem name="2" to = '/codeSnapshot'>
+          <MenuItem name="2" to = '/codesegment'>
               <Icon type="ios-code" />
               代码片段
           </MenuItem>
