@@ -1,15 +1,5 @@
 export default {
     items: [{
-        label: "Application",
-        submenu: [{
-                label: "About Application",
-                selector: "orderFrontStandardAboutPanel:"
-            },
-            {
-                type: "separator"
-            }
-        ]
-    }, {
         label: "Edit",
         submenu: [{
                 label: "Undo",
