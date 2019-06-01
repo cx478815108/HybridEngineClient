@@ -52,6 +52,8 @@
         }
         try {
             const configJSON = JSON.parse(fs.readFileSync(configJSONPath).toString());
+            // 更新工作目录
+            configJSON.workDirectory = this.workDirectory;
             AppDB.saveExistProject(configJSON);
             this.$Message.success({content:"添加成功"});
             this.bus.$emit(AppEventKeys.updateExistedProjects);
