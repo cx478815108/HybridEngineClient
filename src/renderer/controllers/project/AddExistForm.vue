@@ -54,12 +54,16 @@
             const configJSON = JSON.parse(fs.readFileSync(configJSONPath).toString());
             // 更新工作目录
             configJSON.workDirectory = this.workDirectory;
+            const jsonText = JSON.stringify(configJSON, null, 2);
+            fs.writeFileSync(configJSONPath, jsonText);
+
             AppDB.saveExistProject(configJSON);
             this.$Message.success({content:"添加成功"});
             this.bus.$emit(AppEventKeys.updateExistedProjects);
             this.bus.$emit(AppEventKeys.hiddenForms);
         } catch (error) {
             this.$Message.error({content:"tokenhybrid.config.json不是有效JSON文件"});
+            console.log(error);
         }
       }
     }

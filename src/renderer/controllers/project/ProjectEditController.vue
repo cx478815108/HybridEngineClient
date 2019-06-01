@@ -122,7 +122,9 @@
         if(codeEditor &&codeEditor.style){
           codeEditor.style.height = `${(split.clientHeight * this.splitRatio)}px`;
         }
-        appLogContainer.style.height = `${(split.clientHeight * (1- this.splitRatio)) - 4}px`;
+        if(appLogContainer && appLogContainer.style){
+          appLogContainer.style.height = `${(split.clientHeight * (1- this.splitRatio)) - 4}px`;
+        }
       },
       openFinder(){
         const cwd = this.projectConfig.workDirectory;
