@@ -2,7 +2,7 @@
   <div id = "appcontainer">
     <div id = "menuContainer">
       <div id = "title">TokenHybrid</div>
-      <div id = "version">版本号v1.0.2</div>
+      <div id = "version">版本号v1.0.3</div>
       <div id = "menuWrapper">
         <Menu width = '100%' active-name="1" 
         @on-select= "didPressedMenuItem($event)" 
