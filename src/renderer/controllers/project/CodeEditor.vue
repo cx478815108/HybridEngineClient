@@ -15,7 +15,7 @@
     mounted(){
       const ele = document.getElementById("monaco");
       this.monacoInstance = monaco.editor.create(ele, {
-            value:`console.log("hello,world")`,
+            value:`$native.alert('title','msg')`,
             language:"javascript",
             automaticLayout: true,
         });
