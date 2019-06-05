@@ -1,6 +1,6 @@
 {
   "name": "hybridclient",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "陈雄 <478815108@qq.com>",
   "description": "TokenHybrid 打包调试工具",
   "license": "MIT",
@@ -53,7 +53,7 @@
   "dependencies": {
     "chokidar": "^2.1.6",
     "fs-extra": "^7.0.1",
-    "hybridcompiler": "^1.0.7",
+    "hybridcompiler": "^1.0.8",
     "iview": "^3.4.1",
     "lowdb": "^1.0.0",
     "monaco-editor": "^0.17.0",
